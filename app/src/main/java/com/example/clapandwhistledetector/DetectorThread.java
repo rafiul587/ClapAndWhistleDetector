@@ -28,6 +28,7 @@ import com.musicg.wave.WaveHeader;
 
 import android.media.AudioFormat;
 import android.media.AudioRecord;
+import android.media.MediaPlayer;
 import android.util.Log;
 
 public class DetectorThread extends Thread{
@@ -38,13 +39,15 @@ public class DetectorThread extends Thread{
 	private ClapApi clapApi;
 	private volatile Thread _thread;
 
+	private OnSignalsDetectedListener onSignalsDetectedListener;
+
 	private LinkedList<Boolean> whistleResultList = new LinkedList<Boolean>();
 	private LinkedList<Boolean> clapResultList = new LinkedList<Boolean>();
 	private int numWhistles;
 	private int numClaps;
 	private int totalClapsDetected = 0;
-	private int clapsCheckLength = 3;
-	private int clapsPassScore = 3;
+	private final int clapsCheckLength = 3;
+	private final int clapsPassScore = 3;
 	private int totalWhistlesDetected = 0;
 	private int whistleCheckLength = 3;
 	private int whistlePassScore = 3;
@@ -71,8 +74,8 @@ public class DetectorThread extends Thread{
 		waveHeader.setChannels(channel);
 		waveHeader.setBitsPerSample(bitsPerSample);
 		waveHeader.setSampleRate(audioRecord.getSampleRate());
-		clapApi = new ClapApi(waveHeader);
 		whistleApi = new WhistleApi(waveHeader);
+		clapApi = new ClapApi(waveHeader);
 	}
 
 	private void initBuffer() {
@@ -117,13 +120,11 @@ public class DetectorThread extends Thread{
 				if (buffer != null) {
 					// sound detected
 					MainActivity.whistleValue = numWhistles;
-					MainActivity.clapsValue = numClaps;
 
 					// whistle detection
 					//System.out.println("*Whistle:");
 					boolean isWhistle = whistleApi.isWhistle(buffer);
 					boolean isClaps = clapApi.isClap(buffer);
-					Log.d("detection", "claps: " + isClaps);
 					Log.d("detection", "whistle: " + isWhistle);
 
 					if(clapResultList.getFirst()){
@@ -136,6 +137,7 @@ public class DetectorThread extends Thread{
 						numClaps++;
 						initBuffer();
 						totalClapsDetected++;
+						onClapDetected();
 					}
 
 						// clear buffer
@@ -155,8 +157,10 @@ public class DetectorThread extends Thread{
 
 					if (numWhistles >= whistlePassScore) {
 						// clear buffer
+						Log.d("TAG", "numWhistle: " + numWhistles);
 						initBuffer();
 						totalWhistlesDetected++;
+						onWhistleDetected();
 					}
 				// end whistle detection
 				}
@@ -185,6 +189,22 @@ public class DetectorThread extends Thread{
 			e.printStackTrace();
 		}
 	}
+
+	private void onWhistleDetected() {
+		if (onSignalsDetectedListener != null) {
+			onSignalsDetectedListener.onWhistleDetected();
+		}
+	}
+
+	private void onClapDetected() {
+		if (onSignalsDetectedListener != null) {
+			onSignalsDetectedListener.onClapDetected();
+		}
+	}
+
+	public void setOnSignalsDetectedListener(OnSignalsDetectedListener onSignalsDetectedListener) {
+		this.onSignalsDetectedListener = onSignalsDetectedListener;
+	}
 	
 	public int getTotalWhistlesDetected(){
 		return totalWhistlesDetected;
@@ -192,4 +212,9 @@ public class DetectorThread extends Thread{
 	public int getTotalClapsDetectedDetected(){
 		return totalClapsDetected;
 	}
+}
+
+interface OnSignalsDetectedListener {
+	void onWhistleDetected();
+	void onClapDetected();
 }
