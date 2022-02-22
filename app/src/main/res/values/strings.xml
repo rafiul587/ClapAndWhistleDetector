@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Clap And Whistle Detector</string>
+    <string name="melody_tunes">Melody Tunes</string>
+    <string name="detecting">Detecting..</string>
 </resources>

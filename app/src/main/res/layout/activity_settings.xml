@@ -9,33 +9,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitXY"
-        android:src="@drawable/whistle_soumanavi_app"
-        tools:layout_editor_absoluteX="-77dp"
-        tools:layout_editor_absoluteY="0dp" />
-
-    <ImageView
-        android:id="@+id/powerSwitch"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_marginTop="80dp"
-        android:backgroundTint="@color/black"
-        android:src="@drawable/ic_group"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:src="@drawable/whistle_soumanavi_app" />
 
     <LinearLayout
         android:id="@+id/melody"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="110dp"
         android:background="@drawable/melody_background"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:paddingHorizontal="50dp"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@id/powerSwitch">
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:layout_width="80dp"
@@ -43,7 +30,6 @@
             android:src="@drawable/ic_melody_icon" />
 
         <TextView
-            android:id="@+id/detectionStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
@@ -205,32 +191,41 @@
         app:layout_constraintTop_toTopOf="@id/sound" />
 
     <LinearLayout
-        android:id="@+id/goToSettings"
-        android:layout_width="wrap_content"
+        android:id="@+id/volumeLayout"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/option_background"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
         android:layout_marginTop="30dp"
-        android:paddingHorizontal="20dp"
-        android:paddingVertical="10dp"
-        app:layout_constraintTop_toBottomOf="@id/soundIcon"
+        android:background="@drawable/option_background"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart">
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@id/soundIcon">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_settings_24"
-            app:tint="@color/black" />
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/ic_melody_icon"
+            app:tint="#1976D2" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:text="Configurations" />
+            android:text="Volume"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/volumeSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_marginLeft="17dp"
+            android:layout_marginRight="17dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:progressDrawable="@drawable/custom_seekbar"
+            android:thumb="@android:color/transparent"
+            android:splitTrack="false"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

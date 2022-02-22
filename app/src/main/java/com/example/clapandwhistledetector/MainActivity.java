@@ -21,136 +21,91 @@
 package com.example.clapandwhistledetector;
 
 import android.app.ActivityManager;
-import android.app.Service;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.Activity;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-public class MainActivity extends Activity {
+import com.example.clapandwhistledetector.databinding.ActivityMainBinding;
 
-    public static final int DETECT_NONE = 0;
-    public static final int DETECT_WHISTLE = 1;
-    public static int selectedDetection = DETECT_NONE;
+public class MainActivity extends Activity implements OnClickListener {
 
-    // detection parameters
-    private DetectorThread detectorThread;
-    private RecorderThread recorderThread;
-    private Thread detectedTextThread;
-    public static int whistleValue = 0;
-    public static int clapsValue = 0;
+    ActivityMainBinding binding;
 
-    // views
-    private View mainView, listeningView;
-    private Button whistleButton, checkService;
-    private TextView totalWhistlesDetectedNumberText;
-
-    Button stopService;
+    public static final Boolean ON = true;
+    public static final Boolean OFF = false;
+    public static final String FLASH = "flash";
+    public static final String VIBRATION = "vibration";
+    public static final String SOUND = "sound";
+    PreferenceUtil prefUtil;
     private MyService service = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("musicg WhistleAPI Demo");
 
-        // set views
-        LayoutInflater inflater = LayoutInflater.from(this);
-        mainView = inflater.inflate(R.layout.main, null);
-        listeningView = inflater.inflate(R.layout.listening, null);
-        setContentView(mainView);
-        stopService = findViewById(R.id.stopService);
-        check();
-        stopService.setOnClickListener(view -> {
-                    stopService(new Intent(MainActivity.this, MyService.class));
-                    Toast.makeText(this, "Detection Stopped", Toast.LENGTH_SHORT).show();
-                }
-        );
-        ClickEvent clickEvent = new ClickEvent();
-        whistleButton = (Button) this.findViewById(R.id.whistleButton);
-        whistleButton.setOnClickListener(clickEvent);
-        checkService = findViewById(R.id.check);
-        checkService.setOnClickListener(clickEvent);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        prefUtil = new PreferenceUtil(this);
+        binding.powerSwitch.setOnClickListener(this);
+        if (isMyServiceRunning()) {
+            binding.powerSwitch.setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
+            binding.detectionStatus.setText(R.string.detecting);
+        } else {
+            binding.powerSwitch.setColorFilter(null);
+            binding.detectionStatus.setText(R.string.melody_tunes);
+        }
+        binding.goToSettings.setOnClickListener(this);
+        addSwitchesListener();
     }
 
-    private void goHomeView() {
-        setContentView(mainView);
-        if (recorderThread != null) {
-            recorderThread.stopRecording();
-            recorderThread = null;
-        }
-        if (detectorThread != null) {
-            detectorThread.stopDetection();
-            detectorThread = null;
-        }
-        selectedDetection = DETECT_NONE;
-    }
-
-    private void goListeningView() {
-        setContentView(listeningView);
-
-        if (totalWhistlesDetectedNumberText == null) {
-            totalWhistlesDetectedNumberText = (TextView) this.findViewById(R.id.detectedNumberText);
-        }
-
-        // thread for detecting environmental noise
-        if (detectedTextThread == null) {
-            detectedTextThread = new Thread() {
-                public void run() {
-                    try {
-                        while (recorderThread != null && detectorThread != null) {
-                            runOnUiThread(new Runnable() {
-                                public void run() {
-                                    if (detectorThread != null) {
-                                        totalWhistlesDetectedNumberText.setText(String.valueOf(detectorThread.getTotalWhistlesDetected()));
-                                    }
-                                }
-                            });
-                            sleep(100);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    } finally {
-                        detectedTextThread = null;
-                    }
-                }
-            };
-            detectedTextThread.start();
-        }
+    private void addSwitchesListener() {
+        binding.vibrationSwitch.setOnCheckedChangeListener((vs, i) -> {
+            prefUtil.save(VIBRATION, i);
+        });
+        binding.flashLightSwitch.setOnCheckedChangeListener((fs, i) -> {
+            prefUtil.save(FLASH, i);
+        });
+        binding.soundSwitch.setOnCheckedChangeListener((ss, i) -> {
+            prefUtil.save(SOUND, i);
+        });
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, 0, 0, "Quit demo");
-        return super.onCreateOptionsMenu(menu);
+    protected void onResume() {
+        super.onResume();
+        initializeSettings();
+    }
+
+    private void initializeSettings() {
+        binding.vibrationSwitch.setChecked(prefUtil.read(VIBRATION, OFF));
+        binding.flashLightSwitch.setChecked(prefUtil.read(FLASH, OFF));
+        binding.soundSwitch.setChecked(prefUtil.read(SOUND, OFF));
+    }
+
+    public boolean hasPermission() {
+        return ContextCompat.checkSelfPermission(this, "android.permission.RECORD_AUDIO") == 0;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case 0:
-                finish();
-                break;
-            default:
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    public void check() {
-        if (ContextCompat.checkSelfPermission(this, "android.permission.RECORD_AUDIO") != 0) {
-            ActivityCompat.requestPermissions(this, new String[]{"android.permission.RECORD_AUDIO"}, 123);
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 123) {
+            if (permissions.length > 0 && grantResults[0] == 0) {
+                checkAndStartService();
+            }
         }
     }
 
@@ -163,28 +118,69 @@ public class MainActivity extends Activity {
         return false;
     }
 
-    class ClickEvent implements OnClickListener {
-        public void onClick(View view) {
-            if (view == whistleButton) {
-                if (service == null) {
-                    Intent i = new Intent(MainActivity.this, MyService.class);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        MainActivity.this.startForegroundService(i);
-                    }
-                }
-				/*selectedDetection = DETECT_WHISTLE;
-				recorderThread = new RecorderThread();
-				recorderThread.start();
-				//detectorThread = new DetectorThread(recorderThread);
-				detectorThread.start();
-				goListeningView();*/
-            } else if (view == checkService) {
-                if(isMyServiceRunning()) {
-                    Toast.makeText(MainActivity.this, "Running" + "", Toast.LENGTH_SHORT).show();
-                }else {
-                    Toast.makeText(MainActivity.this, "Not Running" + "", Toast.LENGTH_SHORT).show();
-                }
+    private void checkAndStartService() {
+        Intent i = new Intent(MainActivity.this, MyService.class);
+        if (service == null && !isMyServiceRunning()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                MainActivity.this.startForegroundService(i);
+                binding.powerSwitch.setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
+                binding.detectionStatus.setText(R.string.detecting);
+                binding.vibrationSwitch.setEnabled(false);
+                binding.flashLightSwitch.setEnabled(false);
+                binding.soundSwitch.setEnabled(false);
             }
+        } else {
+            stopService(i);
+            binding.powerSwitch.setColorFilter(null);
+            binding.detectionStatus.setText(R.string.melody_tunes);
+            binding.vibrationSwitch.setEnabled(true);
+            binding.flashLightSwitch.setEnabled(true);
+            binding.soundSwitch.setEnabled(true);
         }
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (view == binding.powerSwitch) {
+            if (hasPermission()) {
+                checkAndStartService();
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{"android.permission.RECORD_AUDIO"}, 123);
+            }
+        } else if (view == binding.goToSettings) {
+            if (isMyServiceRunning()) {
+                Toast.makeText(this, "You can't change configurations when detection is running.", Toast.LENGTH_SHORT).show();
+            } else startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (isMyServiceRunning()) {
+            showDialog("The App will keep detecting in the background.", "Ok");
+        } else {
+            showDialog("Do you want to exit the app?", "Yes");
+        }
+    }
+
+    private void showDialog(String message, String positive) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        //Setting message manually and performing action on button click
+        builder
+                .setMessage(message)
+                .setCancelable(false)
+                .setPositiveButton(positive, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        finish();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //  Action for 'NO' Button
+                        dialog.cancel();
+                    }
+                });
+        builder.create().show();
     }
 }

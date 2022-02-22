@@ -33,7 +33,7 @@ import android.util.Log;
 
 public class DetectorThread extends Thread{
 
-	private RecorderThread recorder;
+	private AudioRecord recorder;
 	private WaveHeader waveHeader;
 	private WhistleApi whistleApi;
 	private ClapApi clapApi;
@@ -51,31 +51,31 @@ public class DetectorThread extends Thread{
 	private int totalWhistlesDetected = 0;
 	private int whistleCheckLength = 3;
 	private int whistlePassScore = 3;
+	AudioDispatcherFactory factory;
 	
-	public DetectorThread(RecorderThread recorder){
-		this.recorder = recorder;
-		AudioRecord audioRecord = recorder.getAudioRecord();
-		
+	public DetectorThread(AudioDispatcherFactory factory){
+		this.factory = factory;
+		recorder = factory.getRecorder();
 		int bitsPerSample = 0;
-		if (audioRecord.getAudioFormat() == AudioFormat.ENCODING_PCM_16BIT){
+		if (recorder.getAudioFormat() == AudioFormat.ENCODING_PCM_16BIT){
 			bitsPerSample = 16;
 		}
-		else if (audioRecord.getAudioFormat() == AudioFormat.ENCODING_PCM_8BIT){
+		else if (recorder.getAudioFormat() == AudioFormat.ENCODING_PCM_8BIT){
 			bitsPerSample = 8;
 		}
 		
 		int channel = 0;
 		// whistle detection only supports mono channel
-		if (audioRecord.getChannelConfiguration() == AudioFormat.CHANNEL_IN_MONO){
+		if (recorder.getChannelConfiguration() == AudioFormat.CHANNEL_IN_MONO){
 			channel = 1;
 		}
 
 		waveHeader = new WaveHeader();
 		waveHeader.setChannels(channel);
 		waveHeader.setBitsPerSample(bitsPerSample);
-		waveHeader.setSampleRate(audioRecord.getSampleRate());
+		waveHeader.setSampleRate(recorder.getSampleRate());
 		whistleApi = new WhistleApi(waveHeader);
-		clapApi = new ClapApi(waveHeader);
+		//clapApi = new ClapApi(waveHeader);
 	}
 
 	private void initBuffer() {
@@ -88,13 +88,13 @@ public class DetectorThread extends Thread{
 		}
 		// end init the first frames
 
-		numClaps = 0;
+		/*numClaps = 0;
 		clapResultList.clear();
 
 		// init the first frames
 		for (int i = 0; i < clapsCheckLength; i++) {
 			clapResultList.add(false);
-		}
+		}*/
 	}
 
 	public void start() {
@@ -114,20 +114,19 @@ public class DetectorThread extends Thread{
 			Thread thisThread = Thread.currentThread();
 			while (_thread == thisThread) {
 				// detect sound
-				buffer = recorder.getFrameBytes();
+				buffer = factory.getFrameBytes();
 				
 				// audio analyst
 				if (buffer != null) {
 					// sound detected
-					MainActivity.whistleValue = numWhistles;
 
 					// whistle detection
 					//System.out.println("*Whistle:");
 					boolean isWhistle = whistleApi.isWhistle(buffer);
-					boolean isClaps = clapApi.isClap(buffer);
+					//boolean isClaps = clapApi.isClap(buffer);
 					Log.d("detection", "whistle: " + isWhistle);
 
-					if(clapResultList.getFirst()){
+/*					if(clapResultList.getFirst()){
 						numClaps--;
 					}
 					clapResultList.removeFirst();
@@ -138,7 +137,7 @@ public class DetectorThread extends Thread{
 						initBuffer();
 						totalClapsDetected++;
 						onClapDetected();
-					}
+					}*/
 
 						// clear buffer
 
@@ -166,12 +165,12 @@ public class DetectorThread extends Thread{
 				}
 				else{
 
-					if(clapResultList.getFirst()){
+					/*if(clapResultList.getFirst()){
 						numClaps--;
 					}
 					clapResultList.removeFirst();
 					clapResultList.add(false);
-					MainActivity.clapsValue = numClaps;
+					MainActivity.clapsValue = numClaps;*/
 
 
 					// no sound detected
@@ -180,8 +179,6 @@ public class DetectorThread extends Thread{
 					}
 					whistleResultList.removeFirst();
 					whistleResultList.add(false);
-					
-					MainActivity.whistleValue = numWhistles;
 				}
 				// end audio analyst
 			}
@@ -196,11 +193,6 @@ public class DetectorThread extends Thread{
 		}
 	}
 
-	private void onClapDetected() {
-		if (onSignalsDetectedListener != null) {
-			onSignalsDetectedListener.onClapDetected();
-		}
-	}
 
 	public void setOnSignalsDetectedListener(OnSignalsDetectedListener onSignalsDetectedListener) {
 		this.onSignalsDetectedListener = onSignalsDetectedListener;
