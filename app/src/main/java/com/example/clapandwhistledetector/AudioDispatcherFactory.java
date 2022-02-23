@@ -20,9 +20,12 @@ import be.tarsos.dsp.io.android.AndroidAudioInputStream;
 public class AudioDispatcherFactory {
 
     AudioRecord audioInputStream;
-    private int sampleRate = 44100;
-    private int frameByteSize = 2048; // for 1024 fft size (16bit sample size)
     byte[] buffer;
+    // for 1024 fft size (16bit sample size)
+    int frameByteSize = 2048;
+    AudioDispatcherFactory(){
+        buffer = new byte[frameByteSize];
+    }
 
     @SuppressLint("MissingPermission")
     public AudioDispatcher fromDefaultMicrophone(final int sampleRate,

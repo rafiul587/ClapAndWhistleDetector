@@ -18,9 +18,19 @@ class PreferenceUtil {
         return PreferenceManager.getDefaultSharedPreferences(this.mContext).getBoolean(str, bool);
     }
 
+    public String readString(String str, String str2) {
+        return PreferenceManager.getDefaultSharedPreferences(this.mContext).getString(str, str2);
+    }
+
     public void save(String str, Boolean bool) {
         Editor edit = PreferenceManager.getDefaultSharedPreferences(this.mContext).edit();
         edit.putBoolean(str, bool);
+        edit.apply();
+    }
+
+    public void saveString(String str, String str2) {
+        Editor edit = PreferenceManager.getDefaultSharedPreferences(this.mContext).edit();
+        edit.putString(str, str2);
         edit.apply();
     }
 }

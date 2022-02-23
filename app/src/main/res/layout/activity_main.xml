@@ -2,16 +2,29 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:background="#132847">
 
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:id="@+id/topImage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1:.8"
         android:scaleType="fitXY"
-        android:src="@drawable/whistle_soumanavi_app"
-        tools:layout_editor_absoluteX="-77dp"
-        tools:layout_editor_absoluteY="0dp" />
+        android:src="@drawable/top_image"
+        app:layout_constraintStart_toStartOf="@id/guidelineHalfWidth"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+    <ImageView
+        android:id="@+id/bottomImage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1:.8"
+        android:scaleType="fitXY"
+        android:src="@drawable/bottom_image"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/guidelineHalfWidth"/>
 
     <ImageView
         android:id="@+id/powerSwitch"
@@ -57,10 +70,10 @@
         android:layout_height="0dp"
         android:layout_marginVertical="2dp"
         android:background="@drawable/option_background"
-        app:layout_constraintBottom_toBottomOf="@id/vibrationIcon"
+        app:layout_constraintBottom_toBottomOf="@id/whistleIcon"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toTopOf="@id/vibrationIcon" />
+        app:layout_constraintTop_toTopOf="@id/whistleIcon" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineStart"
@@ -76,133 +89,140 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent=".85" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineHalfWidth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".5" />
+
     <ImageView
-        android:id="@+id/vibrationIcon"
+        android:id="@+id/whistleIcon"
         android:layout_width="60dp"
         android:layout_height="50dp"
         android:layout_marginTop="30dp"
         android:background="@drawable/background_vibration"
         android:padding="10dp"
         android:src="@drawable/ic_vibrate_icon"
-        app:layout_constraintEnd_toStartOf="@id/vibration"
+        app:layout_constraintEnd_toStartOf="@id/whistle"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
         app:layout_constraintTop_toBottomOf="@+id/melody" />
 
     <TextView
-        android:id="@+id/vibration"
+        android:id="@+id/whistle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Vibration"
+        android:text="Whistle"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/vibrationIcon"
-        app:layout_constraintEnd_toStartOf="@id/vibrationSwitch"
-        app:layout_constraintStart_toEndOf="@id/vibrationIcon"
-        app:layout_constraintTop_toTopOf="@id/vibrationIcon" />
+        app:layout_constraintBottom_toBottomOf="@id/whistleIcon"
+        app:layout_constraintEnd_toStartOf="@id/whistleSwitch"
+        app:layout_constraintStart_toEndOf="@id/whistleIcon"
+        app:layout_constraintTop_toTopOf="@id/whistleIcon" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/vibrationSwitch"
+        android:id="@+id/whistleSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textOff="Off"
         android:textOn="On"
-        app:layout_constraintBottom_toBottomOf="@id/vibration"
+        app:layout_constraintBottom_toBottomOf="@id/whistle"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toEndOf="@id/vibration"
-        app:layout_constraintTop_toTopOf="@id/vibration" />
+        app:layout_constraintStart_toEndOf="@id/whistle"
+        app:layout_constraintTop_toTopOf="@id/whistle" />
 
     <View
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginVertical="2dp"
         android:background="@drawable/option_background"
-        app:layout_constraintBottom_toBottomOf="@id/flashIcon"
+        app:layout_constraintBottom_toBottomOf="@id/clapIcon"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toTopOf="@id/flashIcon" />
+        app:layout_constraintTop_toTopOf="@id/clapIcon" />
 
     <ImageView
-        android:id="@+id/flashIcon"
+        android:id="@+id/clapIcon"
         android:layout_width="60dp"
         android:layout_height="50dp"
         android:layout_marginTop="10dp"
         android:background="@drawable/background_flashlight"
         android:padding="10dp"
         android:src="@drawable/ic_flash_icon"
-        app:layout_constraintEnd_toStartOf="@id/flashLight"
+        app:layout_constraintEnd_toStartOf="@id/clap"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@+id/vibrationIcon" />
+        app:layout_constraintTop_toBottomOf="@+id/whistleIcon" />
 
     <TextView
-        android:id="@+id/flashLight"
+        android:id="@+id/clap"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="FlashLight"
+        android:text="Clap"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/flashIcon"
-        app:layout_constraintEnd_toStartOf="@id/flashLightSwitch"
-        app:layout_constraintStart_toEndOf="@id/flashIcon"
-        app:layout_constraintTop_toTopOf="@id/flashIcon" />
+        app:layout_constraintBottom_toBottomOf="@id/clapIcon"
+        app:layout_constraintEnd_toStartOf="@id/clapSwitch"
+        app:layout_constraintStart_toEndOf="@id/clapIcon"
+        app:layout_constraintTop_toTopOf="@id/clapIcon" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/flashLightSwitch"
+        android:id="@+id/clapSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textOff="Off"
         android:textOn="On"
-        app:layout_constraintBottom_toBottomOf="@id/flashLight"
+        app:layout_constraintBottom_toBottomOf="@id/clap"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toEndOf="@id/flashLight"
-        app:layout_constraintTop_toTopOf="@id/flashLight" />
+        app:layout_constraintStart_toEndOf="@id/clap"
+        app:layout_constraintTop_toTopOf="@id/clap" />
 
     <View
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginVertical="2dp"
         android:background="@drawable/option_background"
-        app:layout_constraintBottom_toBottomOf="@id/soundIcon"
+        app:layout_constraintBottom_toBottomOf="@id/clapAndWhistleIcon"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toTopOf="@id/soundIcon" />
+        app:layout_constraintTop_toTopOf="@id/clapAndWhistleIcon" />
 
     <ImageView
-        android:id="@+id/soundIcon"
+        android:id="@+id/clapAndWhistleIcon"
         android:layout_width="60dp"
         android:layout_height="50dp"
         android:layout_marginTop="10dp"
         android:background="@drawable/background_sound"
         android:padding="10dp"
         android:src="@drawable/ic_sound_icon"
-        app:layout_constraintEnd_toStartOf="@id/sound"
+        app:layout_constraintEnd_toStartOf="@id/clapAndWhistle"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@+id/flashIcon" />
+        app:layout_constraintTop_toBottomOf="@+id/clapIcon" />
 
     <TextView
-        android:id="@+id/sound"
+        android:id="@+id/clapAndWhistle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sound"
+        android:text="Clap And Whistle"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/soundIcon"
-        app:layout_constraintEnd_toStartOf="@id/soundSwitch"
-        app:layout_constraintStart_toEndOf="@id/soundIcon"
-        app:layout_constraintTop_toTopOf="@id/soundIcon" />
+        app:layout_constraintBottom_toBottomOf="@id/clapAndWhistleIcon"
+        app:layout_constraintEnd_toStartOf="@id/clapAndWhistleSwitch"
+        app:layout_constraintStart_toEndOf="@id/clapAndWhistleIcon"
+        app:layout_constraintTop_toTopOf="@id/clapAndWhistleIcon" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/soundSwitch"
+        android:id="@+id/clapAndWhistleSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textOff="Off"
         android:textOn="On"
-        app:layout_constraintBottom_toBottomOf="@id/sound"
+        app:layout_constraintBottom_toBottomOf="@id/clapAndWhistle"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toEndOf="@id/sound"
-        app:layout_constraintTop_toTopOf="@id/sound" />
+        app:layout_constraintStart_toEndOf="@id/clapAndWhistle"
+        app:layout_constraintTop_toTopOf="@id/clapAndWhistle" />
 
     <LinearLayout
         android:id="@+id/goToSettings"
@@ -214,7 +234,7 @@
         android:layout_marginTop="30dp"
         android:paddingHorizontal="20dp"
         android:paddingVertical="10dp"
-        app:layout_constraintTop_toBottomOf="@id/soundIcon"
+        app:layout_constraintTop_toBottomOf="@id/clapAndWhistleIcon"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@id/guidelineStart">
 

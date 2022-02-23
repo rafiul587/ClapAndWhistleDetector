@@ -45,11 +45,10 @@ public class MainActivity extends Activity implements OnClickListener {
 
     ActivityMainBinding binding;
 
-    public static final Boolean ON = true;
-    public static final Boolean OFF = false;
-    public static final String FLASH = "flash";
-    public static final String VIBRATION = "vibration";
-    public static final String SOUND = "sound";
+    final Boolean ON = true;
+    final Boolean OFF = false;
+    final String WHISTLE = "whistle";
+    final String CLAP = "clap";
     PreferenceUtil prefUtil;
     private MyService service = null;
 
@@ -73,14 +72,23 @@ public class MainActivity extends Activity implements OnClickListener {
     }
 
     private void addSwitchesListener() {
-        binding.vibrationSwitch.setOnCheckedChangeListener((vs, i) -> {
-            prefUtil.save(VIBRATION, i);
+        binding.whistleSwitch.setOnCheckedChangeListener((vs, i) -> {
+            prefUtil.save(WHISTLE, i);
+            prefUtil.save(CLAP, !i);
+            binding.clapSwitch.setChecked(!i);
         });
-        binding.flashLightSwitch.setOnCheckedChangeListener((fs, i) -> {
-            prefUtil.save(FLASH, i);
+        binding.clapSwitch.setOnCheckedChangeListener((fs, i) -> {
+            prefUtil.save(CLAP, i);
+            prefUtil.save(WHISTLE, !i);
+            binding.whistleSwitch.setChecked(!i);
         });
-        binding.soundSwitch.setOnCheckedChangeListener((ss, i) -> {
-            prefUtil.save(SOUND, i);
+        binding.clapAndWhistleSwitch.setOnCheckedChangeListener((ss, i) -> {
+            prefUtil.save(WHISTLE, i);
+            prefUtil.save(CLAP, i);
+            if(i) {
+                binding.clapSwitch.setChecked(false);
+                binding.whistleSwitch.setChecked(false);
+            }
         });
     }
 
@@ -91,9 +99,10 @@ public class MainActivity extends Activity implements OnClickListener {
     }
 
     private void initializeSettings() {
-        binding.vibrationSwitch.setChecked(prefUtil.read(VIBRATION, OFF));
-        binding.flashLightSwitch.setChecked(prefUtil.read(FLASH, OFF));
-        binding.soundSwitch.setChecked(prefUtil.read(SOUND, OFF));
+        binding.whistleSwitch.setChecked(prefUtil.read(WHISTLE, OFF));
+        binding.clapSwitch.setChecked(prefUtil.read(CLAP, OFF));
+
+        binding.clapAndWhistleSwitch.setChecked(prefUtil.read(WHISTLE, OFF) && prefUtil.read(CLAP, OFF));
     }
 
     public boolean hasPermission() {
@@ -125,17 +134,17 @@ public class MainActivity extends Activity implements OnClickListener {
                 MainActivity.this.startForegroundService(i);
                 binding.powerSwitch.setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
                 binding.detectionStatus.setText(R.string.detecting);
-                binding.vibrationSwitch.setEnabled(false);
-                binding.flashLightSwitch.setEnabled(false);
-                binding.soundSwitch.setEnabled(false);
+                binding.whistleSwitch.setEnabled(false);
+                binding.clapSwitch.setEnabled(false);
+                binding.clapAndWhistleSwitch.setEnabled(false);
             }
         } else {
             stopService(i);
             binding.powerSwitch.setColorFilter(null);
             binding.detectionStatus.setText(R.string.melody_tunes);
-            binding.vibrationSwitch.setEnabled(true);
-            binding.flashLightSwitch.setEnabled(true);
-            binding.soundSwitch.setEnabled(true);
+            binding.whistleSwitch.setEnabled(true);
+            binding.clapSwitch.setEnabled(true);
+            binding.clapAndWhistleSwitch.setEnabled(true);
         }
     }
 

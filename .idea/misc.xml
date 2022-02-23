@@ -13,6 +13,7 @@
         <entry key="..\:/Users/Rafiul Islam/AndroidStudioProjects/ClapAndWhistleDetector/app/src/main/res/drawable/ic_group.xml" value="0.1695" />
         <entry key="..\:/Users/Rafiul Islam/AndroidStudioProjects/ClapAndWhistleDetector/app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.1205" />
         <entry key="..\:/Users/Rafiul Islam/AndroidStudioProjects/ClapAndWhistleDetector/app/src/main/res/drawable/ic_melody_icon.xml" value="0.1435" />
+        <entry key="..\:/Users/Rafiul Islam/AndroidStudioProjects/ClapAndWhistleDetector/app/src/main/res/drawable/ic_mobile_import_24.xml" value="0.138" />
         <entry key="..\:/Users/Rafiul Islam/AndroidStudioProjects/ClapAndWhistleDetector/app/src/main/res/drawable/melody_background.xml" value="0.1435" />
         <entry key="..\:/Users/Rafiul Islam/AndroidStudioProjects/ClapAndWhistleDetector/app/src/main/res/drawable/option_background.xml" value="0.1" />
         <entry key="..\:/Users/Rafiul Islam/AndroidStudioProjects/ClapAndWhistleDetector/app/src/main/res/drawable/seekbar_background.xml" value="0.1215" />
@@ -20,14 +21,22 @@
         <entry key="..\:/Users/Rafiul Islam/AndroidStudioProjects/ClapAndWhistleDetector/app/src/main/res/drawable/sound_background.xml" value="0.1435" />
         <entry key="..\:/Users/Rafiul Islam/AndroidStudioProjects/ClapAndWhistleDetector/app/src/main/res/drawable/vibration_background.xml" value="0.1435" />
         <entry key="..\:/Users/Rafiul Islam/AndroidStudioProjects/ClapAndWhistleDetector/app/src/main/res/drawable/whistle_soumanavi_app.xml" value="0.1" />
-        <entry key="..\:/Users/Rafiul Islam/AndroidStudioProjects/ClapAndWhistleDetector/app/src/main/res/layout/activity_main.xml" value="0.25052083333333336" />
-        <entry key="..\:/Users/Rafiul Islam/AndroidStudioProjects/ClapAndWhistleDetector/app/src/main/res/layout/activity_settings.xml" value="0.25416666666666665" />
-        <entry key="..\:/Users/Rafiul Islam/AndroidStudioProjects/ClapAndWhistleDetector/app/src/main/res/layout/activity_splash.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Rafiul Islam/AndroidStudioProjects/ClapAndWhistleDetector/app/src/main/res/layout/activity_main.xml" value="0.264" />
+        <entry key="..\:/Users/Rafiul Islam/AndroidStudioProjects/ClapAndWhistleDetector/app/src/main/res/layout/activity_select_file.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Rafiul Islam/AndroidStudioProjects/ClapAndWhistleDetector/app/src/main/res/layout/activity_settings.xml" value="0.176" />
+        <entry key="..\:/Users/Rafiul Islam/AndroidStudioProjects/ClapAndWhistleDetector/app/src/main/res/layout/activity_splash.xml" value="0.2" />
+        <entry key="..\:/Users/Rafiul Islam/AndroidStudioProjects/ClapAndWhistleDetector/app/src/main/res/layout/fragment_file_list.xml" value="0.11822916666666666" />
+        <entry key="..\:/Users/Rafiul Islam/AndroidStudioProjects/ClapAndWhistleDetector/app/src/main/res/layout/fragment_file_select.xml" value="0.264" />
+        <entry key="..\:/Users/Rafiul Islam/AndroidStudioProjects/ClapAndWhistleDetector/app/src/main/res/layout/fragment_preference.xml" value="0.1" />
+        <entry key="..\:/Users/Rafiul Islam/AndroidStudioProjects/ClapAndWhistleDetector/app/src/main/res/layout/item_file.xml" value="0.2" />
         <entry key="..\:/Users/Rafiul Islam/AndroidStudioProjects/ClapAndWhistleDetector/app/src/main/res/layout/listening.xml" value="0.25052083333333336" />
         <entry key="..\:/Users/Rafiul Islam/AndroidStudioProjects/ClapAndWhistleDetector/app/src/main/res/layout/main.xml" value="0.176" />
         <entry key="..\:/Users/Rafiul Islam/AndroidStudioProjects/ClapAndWhistleDetector/app/src/main/res/layout/settings.xml" value="0.25052083333333336" />
+        <entry key="..\:/Users/Rafiul Islam/AndroidStudioProjects/ClapAndWhistleDetector/app/src/main/res/layout/settings_activity.xml" value="0.1015625" />
         <entry key="..\:/Users/Rafiul Islam/AndroidStudioProjects/ClapAndWhistleDetector/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.124" />
         <entry key="..\:/Users/Rafiul Islam/AndroidStudioProjects/ClapAndWhistleDetector/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.124" />
+        <entry key="..\:/Users/Rafiul Islam/AndroidStudioProjects/ClapAndWhistleDetector/app/src/main/res/xml/pref_alarm.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Rafiul Islam/AndroidStudioProjects/ClapAndWhistleDetector/app/src/main/res/xml/root_preferences.xml" value="0.11302083333333333" />
       </map>
     </option>
   </component>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <declare-styleable name="ExtraRingtonePreference">
+        <attr name="ringtoneType"><!-- Should correspond to RingtoneManager -->
+            <!-- TYPE_RINGTONE: Ringtones. -->
+            <flag name="ringtone" value="1" />
+            <!-- TYPE_NOTIFICATION: Notification sounds. -->
+            <flag name="notification" value="2" />
+            <!-- TYPE_ALARM: Alarm sounds. -->
+            <flag name="alarm" value="4" />
+            <!-- TYPE_ALL: All available ringtone sounds. -->
+            <flag name="all" value="7" />
+        </attr>
+        <attr name="showSilent" format="boolean"/>
+        <attr name="showDefault" format="boolean"/>
+        <attr name="extraRingtones" format="reference"/>
+        <attr name="extraRingtoneTitles" format="reference"/>
+    </declare-styleable>
+</resources>

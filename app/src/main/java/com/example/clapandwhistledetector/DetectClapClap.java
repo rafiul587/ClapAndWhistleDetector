@@ -55,11 +55,11 @@ public class DetectClapClap implements OnsetHandler {
 
     public void listen() {
 
-        dispatcher = factory.fromDefaultMicrophone(44100, 1024, 0);
+        dispatcher = factory.fromDefaultMicrophone(44100, 2048, 0);
         double threshold = 8;
         double sensitivity = 20;
 
-        PercussionOnsetDetector mPercussionDetector = new PercussionOnsetDetector(44100, 1024,
+        PercussionOnsetDetector mPercussionDetector = new PercussionOnsetDetector(44100, 2048,
                 (time, salience) -> {
                     Log.d("TAG", "Clap detected!");
                     onClapDetected();

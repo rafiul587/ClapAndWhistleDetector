@@ -1,7 +1,5 @@
 package com.example.clapandwhistledetector;
 
-import static com.example.clapandwhistledetector.MainActivity.*;
-
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -13,10 +11,17 @@ import com.example.clapandwhistledetector.databinding.ActivitySettingsBinding;
 
 public class SettingsActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener {
 
+    public final Boolean ON = true;
+    public final Boolean OFF = false;
+    public final String FLASH = "flash";
+    public final String VIBRATION = "vibration";
+    public final String SOUND = "sound";
+
     ActivitySettingsBinding binding;
     PreferenceUtil prefUtil;
     AudioManager audioManager;
     int maxV, curV;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -21,26 +22,14 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.camera.core.Camera;
-import androidx.camera.core.CameraControl;
-import androidx.camera.core.CameraSelector;
-import androidx.camera.core.Preview;
-import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleService;
-
-import com.google.common.util.concurrent.ListenableFuture;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class MyService extends LifecycleService implements OnSignalsDetectedListener, MediaPlayer.OnCompletionListener {
 
     private static final String CHANNEL_DEFAULT_IMPORTANCE = "Low";
     private static final int ONGOING_NOTIFICATION_ID = 2;
+    final static String SELECTED_FILE_URI = "selected_file_uri";
     private DetectorThread detectorThread;
     private RecorderThread recorderThread;
     private DetectClapClap detectClapClap;
@@ -56,13 +45,16 @@ public class MyService extends LifecycleService implements OnSignalsDetectedList
     final String FLASH = "flash";
     final String VIBRATION = "vibration";
     final String SOUND = "sound";
+    final String WHISTLE = "whistle";
+    final String CLAP = "clap";
+    final String WHISTLE_AND_CLAP = "whistleAndClap";
 
     static volatile Boolean keepVibrate = false;
     static volatile Boolean keepFlashOn = false;
     ;
     private boolean deviceHasCameraFlash;
     private boolean isFlashOn;
-    private boolean isFlashEnable, isVibrationEnable, isSoundEnable;
+    private boolean isFlashEnable, isVibrationEnable, isSoundEnable, isOnlyClap, isOnlyWhistle, isBoth;
 
     public MyService() {
     }
@@ -100,16 +92,46 @@ public class MyService extends LifecycleService implements OnSignalsDetectedList
     }
 
     private void initializeDetector() {
-        mediaPlayer = MediaPlayer.create(this, R.raw.alarm);
+        isOnlyWhistle = prefUtil.read(WHISTLE, OFF);
+        isOnlyClap = prefUtil.read(CLAP, OFF);
+        isBoth = prefUtil.read(WHISTLE_AND_CLAP, OFF);
+        String uriString = prefUtil.readString(SELECTED_FILE_URI, "");
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.reset();
+        if(uriString.length() != 0){
+            Uri uri = Uri.parse(uriString);
+            try {
+                mediaPlayer.setDataSource(this, uri);
+                mediaPlayer.prepareAsync();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }else mediaPlayer = MediaPlayer.create(this, R.raw.alarm);
         mediaPlayer.setOnCompletionListener(this);
-/*        recorderThread = new RecorderThread();
-        recorderThread.start();*/
         AudioDispatcherFactory factory = new AudioDispatcherFactory();
-        detectClapClap = new DetectClapClap(factory);
-        detectorThread = new DetectorThread(factory);
-        detectorThread.start();
-        detectorThread.setOnSignalsDetectedListener(this);
-        detectClapClap.setOnSignalsDetectedListener(this);
+
+        if(isOnlyWhistle && isOnlyClap) {
+/*            recorderThread = new RecorderThread();
+            recorderThread.start();*/
+            //For Clap
+            detectClapClap = new DetectClapClap(factory);
+            detectClapClap.setOnSignalsDetectedListener(this);
+
+            //For Whistle
+            detectorThread = new DetectorThread(factory);
+            detectorThread.start();
+            detectorThread.setOnSignalsDetectedListener(this);
+
+        }else if(isOnlyClap){
+            detectClapClap = new DetectClapClap(factory);
+            detectClapClap.setOnSignalsDetectedListener(this);
+        }else if(isOnlyWhistle){
+            factory.fromDefaultMicrophone(44100, 2048, 0);
+            detectorThread = new DetectorThread(factory);
+            detectorThread.start();
+            detectorThread.setOnSignalsDetectedListener(this);
+        }
+
     }
 
     private void buildNotification() {
@@ -169,6 +191,12 @@ public class MyService extends LifecycleService implements OnSignalsDetectedList
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onWhistleDetected() {
+        play();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public void play() {
+
         if (isVibrationEnable) {
             vibrate();
         }
@@ -184,15 +212,7 @@ public class MyService extends LifecycleService implements OnSignalsDetectedList
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onClapDetected() {
-        if (isVibrationEnable) {
-            vibrate();
-        }
-        if (isFlashEnable) {
-            startTimer(1000, true);
-        }
-        if (isSoundEnable) {
-            playSound();
-        }
+        play();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
