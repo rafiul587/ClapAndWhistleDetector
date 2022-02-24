@@ -1,5 +1,6 @@
-package com.example.clapandwhistledetector;
+package com.example.clapandwhistledetector.fragments;
 
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -9,16 +10,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 
-import com.example.clapandwhistledetector.databinding.FragmentFileListBinding;
+import com.example.clapandwhistledetector.R;
+import com.example.clapandwhistledetector.activities.FileSelectActivity;
 import com.example.clapandwhistledetector.databinding.FragmentFileSelectBinding;
+import com.example.clapandwhistledetector.fragments.FileListFragment;
+import com.example.clapandwhistledetector.util.PreferenceUtil;
 
 public class FileSelectFragment extends Fragment {
 
     FragmentFileSelectBinding binding;
     PreferenceUtil prefUtil;
     Uri uri;
+    MediaPlayer mediaPlayer;
 
     public FileSelectFragment() {
         // Required empty public constructor
@@ -28,6 +32,12 @@ public class FileSelectFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentFileSelectBinding.inflate(inflater, container, false);
+        requireActivity().setActionBar(binding.toolbar);
+        requireActivity().getActionBar().setTitle("Select Tone");
+        // Display application icon in the toolbar
+        requireActivity().getActionBar().setDisplayShowHomeEnabled(true);
+        requireActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
+        binding.toolbar.setNavigationOnClickListener(view -> requireActivity().onBackPressed());
         prefUtil = new PreferenceUtil(getActivity());
         binding.importLayout.setOnClickListener(view -> {
             if (savedInstanceState == null) {
@@ -37,6 +47,15 @@ public class FileSelectFragment extends Fragment {
                         .replace(R.id.fragment_container_view, new FileListFragment())
                         .addToBackStack(null)
                         .commit();
+            }
+        });
+        binding.defaultToneList.setOnClickListener(view -> {
+            if(!binding.radioButton.isChecked()) {
+                binding.radioButton.setChecked(true);
+                mediaPlayer = MediaPlayer.create(getActivity(), R.raw.alarm);
+                mediaPlayer.start();
+                prefUtil.saveString(FileSelectActivity.SELECTED_FILE_URI, "");
+                binding.selectedFileName.setText("None");
             }
         });
         return binding.getRoot();
@@ -55,12 +74,14 @@ public class FileSelectFragment extends Fragment {
             binding.selectedFileName.setText("None");
             binding.radioButton.setChecked(true);
         }
-        binding.radioButton.setOnCheckedChangeListener((compoundButton, b) -> {
-            if(b){
-                prefUtil.saveString(FileSelectActivity.SELECTED_FILE_URI, "");
-                binding.selectedFileName.setText("None");
+    }
 
-            }
-        });
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(mediaPlayer != null){
+            mediaPlayer.reset();
+            mediaPlayer.release();
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.clapandwhistledetector;
+package com.example.clapandwhistledetector.adapters;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,14 +10,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.clapandwhistledetector.model.FileModel;
 import com.example.clapandwhistledetector.databinding.ItemFileBinding;
 
 import java.util.List;
 
 
-class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileHolder> {
+ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileHolder> {
 
-    interface ClickListener {
+    public interface ClickListener {
         void onClick(int adapterPosition);
     }
 
@@ -45,6 +46,9 @@ class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileHolder> {
         Log.d("TAG", "onBindViewHolder: ");
         fileHolder.fileName.setText(fileList.get(i).getName());
         fileHolder.radioButton.setChecked(fileList.get(i).isActive());
+        if(!fileHolder.radioButton.isChecked()){
+            fileHolder.radioButton.setAlpha(.5f);
+        }
     }
 
     public class FileHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

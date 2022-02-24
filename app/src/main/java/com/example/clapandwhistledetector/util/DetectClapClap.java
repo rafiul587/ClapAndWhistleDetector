@@ -1,12 +1,10 @@
-package com.example.clapandwhistledetector;
+package com.example.clapandwhistledetector.util;
 
 import android.content.Context;
-import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.util.Log;
 
 import be.tarsos.dsp.AudioDispatcher;
-import be.tarsos.dsp.AudioEvent;
 import be.tarsos.dsp.onsets.OnsetHandler;
 import be.tarsos.dsp.onsets.PercussionOnsetDetector;
 
@@ -27,7 +25,7 @@ public class DetectClapClap implements OnsetHandler {
     AudioDispatcherFactory factory;
 
 
-    DetectClapClap(AudioDispatcherFactory factory) {
+    public DetectClapClap(AudioDispatcherFactory factory) {
 /*        this.recorder = recorder.getAudioRecord();
         SAMPLE_RATE = getValidSampleRates();
         int minBufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE, 16, 2);

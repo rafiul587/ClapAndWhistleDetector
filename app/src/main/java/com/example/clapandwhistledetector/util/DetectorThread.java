@@ -18,7 +18,7 @@
  * 
  */
 
-package com.example.clapandwhistledetector;
+package com.example.clapandwhistledetector.util;
 
 import java.util.LinkedList;
 
@@ -28,7 +28,6 @@ import com.musicg.wave.WaveHeader;
 
 import android.media.AudioFormat;
 import android.media.AudioRecord;
-import android.media.MediaPlayer;
 import android.util.Log;
 
 public class DetectorThread extends Thread{
@@ -36,18 +35,13 @@ public class DetectorThread extends Thread{
 	private AudioRecord recorder;
 	private WaveHeader waveHeader;
 	private WhistleApi whistleApi;
-	private ClapApi clapApi;
 	private volatile Thread _thread;
 
 	private OnSignalsDetectedListener onSignalsDetectedListener;
 
 	private LinkedList<Boolean> whistleResultList = new LinkedList<Boolean>();
-	private LinkedList<Boolean> clapResultList = new LinkedList<Boolean>();
 	private int numWhistles;
-	private int numClaps;
 	private int totalClapsDetected = 0;
-	private final int clapsCheckLength = 3;
-	private final int clapsPassScore = 3;
 	private int totalWhistlesDetected = 0;
 	private int whistleCheckLength = 3;
 	private int whistlePassScore = 3;
@@ -75,7 +69,6 @@ public class DetectorThread extends Thread{
 		waveHeader.setBitsPerSample(bitsPerSample);
 		waveHeader.setSampleRate(recorder.getSampleRate());
 		whistleApi = new WhistleApi(waveHeader);
-		//clapApi = new ClapApi(waveHeader);
 	}
 
 	private void initBuffer() {
@@ -86,15 +79,6 @@ public class DetectorThread extends Thread{
 		for (int i = 0; i < whistleCheckLength; i++) {
 			whistleResultList.add(false);
 		}
-		// end init the first frames
-
-		/*numClaps = 0;
-		clapResultList.clear();
-
-		// init the first frames
-		for (int i = 0; i < clapsCheckLength; i++) {
-			clapResultList.add(false);
-		}*/
 	}
 
 	public void start() {
@@ -121,26 +105,8 @@ public class DetectorThread extends Thread{
 					// sound detected
 
 					// whistle detection
-					//System.out.println("*Whistle:");
 					boolean isWhistle = whistleApi.isWhistle(buffer);
-					//boolean isClaps = clapApi.isClap(buffer);
 					Log.d("detection", "whistle: " + isWhistle);
-
-/*					if(clapResultList.getFirst()){
-						numClaps--;
-					}
-					clapResultList.removeFirst();
-					clapResultList.add(isClaps);
-
-					if(isClaps){
-						numClaps++;
-						initBuffer();
-						totalClapsDetected++;
-						onClapDetected();
-					}*/
-
-						// clear buffer
-
 
 					if (whistleResultList.getFirst()) {
 						numWhistles--;
@@ -152,27 +118,15 @@ public class DetectorThread extends Thread{
 					if (isWhistle) {
 						numWhistles++;
 					}
-					//System.out.println("num:" + numWhistles);
 
 					if (numWhistles >= whistlePassScore) {
 						// clear buffer
-						Log.d("TAG", "numWhistle: " + numWhistles);
 						initBuffer();
-						totalWhistlesDetected++;
 						onWhistleDetected();
 					}
 				// end whistle detection
 				}
 				else{
-
-					/*if(clapResultList.getFirst()){
-						numClaps--;
-					}
-					clapResultList.removeFirst();
-					clapResultList.add(false);
-					MainActivity.clapsValue = numClaps;*/
-
-
 					// no sound detected
 					if (whistleResultList.getFirst()) {
 						numWhistles--;
@@ -204,9 +158,4 @@ public class DetectorThread extends Thread{
 	public int getTotalClapsDetectedDetected(){
 		return totalClapsDetected;
 	}
-}
-
-interface OnSignalsDetectedListener {
-	void onWhistleDetected();
-	void onClapDetected();
 }

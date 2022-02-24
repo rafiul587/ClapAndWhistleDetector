@@ -1,5 +1,6 @@
-package com.example.clapandwhistledetector;
+package com.example.clapandwhistledetector.activities;
 
+import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -7,6 +8,8 @@ import android.widget.SeekBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.clapandwhistledetector.MyService;
+import com.example.clapandwhistledetector.util.PreferenceUtil;
 import com.example.clapandwhistledetector.databinding.ActivitySettingsBinding;
 
 public class SettingsActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener {
@@ -35,9 +38,14 @@ public class SettingsActivity extends AppCompatActivity implements SeekBar.OnSee
         binding.volumeSeekBar.setMax(maxV);
         binding.volumeSeekBar.setProgress(curV);
         binding.volumeSeekBar.setOnSeekBarChangeListener(this);
+
         initializeSettings();
         checkSettings();
         addSwitchesListener();
+
+        binding.selectTonesLayout.setOnClickListener( view -> {
+            startActivity(new Intent(SettingsActivity.this, FileSelectActivity.class));
+        });
     }
 
     private void addSwitchesListener() {
@@ -101,5 +109,14 @@ public class SettingsActivity extends AppCompatActivity implements SeekBar.OnSee
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(MyService.isRestartNeeded){
+            stopService(new Intent(this, MyService.class));
+        }
+
     }
 }

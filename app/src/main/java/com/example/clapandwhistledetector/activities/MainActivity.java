@@ -18,7 +18,7 @@
  *
  */
 
-package com.example.clapandwhistledetector;
+package com.example.clapandwhistledetector.activities;
 
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -29,8 +29,6 @@ import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.Activity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
@@ -38,7 +36,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.splashscreen.SplashScreen;
 
+import com.example.clapandwhistledetector.MyService;
+import com.example.clapandwhistledetector.util.PreferenceUtil;
+import com.example.clapandwhistledetector.R;
 import com.example.clapandwhistledetector.databinding.ActivityMainBinding;
 
 public class MainActivity extends Activity implements OnClickListener {
@@ -55,7 +57,7 @@ public class MainActivity extends Activity implements OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        SplashScreen.installSplashScreen(this);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         prefUtil = new PreferenceUtil(this);
@@ -68,41 +70,30 @@ public class MainActivity extends Activity implements OnClickListener {
             binding.detectionStatus.setText(R.string.melody_tunes);
         }
         binding.goToSettings.setOnClickListener(this);
+        initializeSettings();
         addSwitchesListener();
     }
 
     private void addSwitchesListener() {
         binding.whistleSwitch.setOnCheckedChangeListener((vs, i) -> {
             prefUtil.save(WHISTLE, i);
-            prefUtil.save(CLAP, !i);
-            binding.clapSwitch.setChecked(!i);
+            if(isMyServiceRunning()){
+                MyService.isRestartNeeded = true;
+                stopService(new Intent(MainActivity.this, MyService.class));
+            }
         });
         binding.clapSwitch.setOnCheckedChangeListener((fs, i) -> {
             prefUtil.save(CLAP, i);
-            prefUtil.save(WHISTLE, !i);
-            binding.whistleSwitch.setChecked(!i);
-        });
-        binding.clapAndWhistleSwitch.setOnCheckedChangeListener((ss, i) -> {
-            prefUtil.save(WHISTLE, i);
-            prefUtil.save(CLAP, i);
-            if(i) {
-                binding.clapSwitch.setChecked(false);
-                binding.whistleSwitch.setChecked(false);
+            if(isMyServiceRunning()){
+                MyService.isRestartNeeded = true;
+                stopService(new Intent(MainActivity.this, MyService.class));
             }
         });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        initializeSettings();
     }
 
     private void initializeSettings() {
         binding.whistleSwitch.setChecked(prefUtil.read(WHISTLE, OFF));
         binding.clapSwitch.setChecked(prefUtil.read(CLAP, OFF));
-
-        binding.clapAndWhistleSwitch.setChecked(prefUtil.read(WHISTLE, OFF) && prefUtil.read(CLAP, OFF));
     }
 
     public boolean hasPermission() {
@@ -134,17 +125,11 @@ public class MainActivity extends Activity implements OnClickListener {
                 MainActivity.this.startForegroundService(i);
                 binding.powerSwitch.setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
                 binding.detectionStatus.setText(R.string.detecting);
-                binding.whistleSwitch.setEnabled(false);
-                binding.clapSwitch.setEnabled(false);
-                binding.clapAndWhistleSwitch.setEnabled(false);
             }
         } else {
             stopService(i);
             binding.powerSwitch.setColorFilter(null);
             binding.detectionStatus.setText(R.string.melody_tunes);
-            binding.whistleSwitch.setEnabled(true);
-            binding.clapSwitch.setEnabled(true);
-            binding.clapAndWhistleSwitch.setEnabled(true);
         }
     }
 
@@ -158,8 +143,9 @@ public class MainActivity extends Activity implements OnClickListener {
             }
         } else if (view == binding.goToSettings) {
             if (isMyServiceRunning()) {
-                Toast.makeText(this, "You can't change configurations when detection is running.", Toast.LENGTH_SHORT).show();
-            } else startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                MyService.isRestartNeeded = true;
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+            }
         }
     }
 

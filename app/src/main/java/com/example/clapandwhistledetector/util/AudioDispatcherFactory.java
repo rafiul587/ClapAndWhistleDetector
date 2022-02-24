@@ -1,4 +1,4 @@
-package com.example.clapandwhistledetector;
+package com.example.clapandwhistledetector.util;
 
 import android.annotation.SuppressLint;
 import android.media.AudioRecord;
@@ -23,7 +23,7 @@ public class AudioDispatcherFactory {
     byte[] buffer;
     // for 1024 fft size (16bit sample size)
     int frameByteSize = 2048;
-    AudioDispatcherFactory(){
+    public AudioDispatcherFactory(){
         buffer = new byte[frameByteSize];
     }
 

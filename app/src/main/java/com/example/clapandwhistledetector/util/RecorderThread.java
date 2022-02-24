@@ -18,7 +18,7 @@
  *
  */
 
-package com.example.clapandwhistledetector;
+package com.example.clapandwhistledetector.util;
 
 import android.annotation.SuppressLint;
 import android.media.AudioFormat;

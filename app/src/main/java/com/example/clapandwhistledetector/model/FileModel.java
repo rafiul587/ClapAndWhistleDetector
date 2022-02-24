@@ -1,4 +1,4 @@
-package com.example.clapandwhistledetector;
+package com.example.clapandwhistledetector.model;
 
 import android.net.Uri;
 
@@ -7,7 +7,7 @@ public class FileModel {
     private Uri uri;
     private boolean isActive = false;
 
-    FileModel(String name, Uri uri, Boolean isActive){
+    public FileModel(String name, Uri uri, Boolean isActive){
         this.name = name;
         this.uri = uri;
         this.isActive = isActive;

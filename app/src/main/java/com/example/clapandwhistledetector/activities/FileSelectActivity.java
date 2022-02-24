@@ -1,22 +1,19 @@
-package com.example.clapandwhistledetector;
+package com.example.clapandwhistledetector.activities;
 
-import android.database.Cursor;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.PreferenceFragmentCompat;
+
+import com.example.clapandwhistledetector.fragments.FileSelectFragment;
+import com.example.clapandwhistledetector.R;
 
 public class FileSelectActivity extends AppCompatActivity {
-    final static String SELECTED_FILE_URI = "selected_file_uri";
-    final static String SELECTED_FILE_POSITION = "selected_file_position";
+    public final static String SELECTED_FILE_URI = "selected_file_uri";
+    public final static String SELECTED_FILE_POSITION = "selected_file_position";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.settings_activity);
+        setContentView(R.layout.activity_select_file);
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()

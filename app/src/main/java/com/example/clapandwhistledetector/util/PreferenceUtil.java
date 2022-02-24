@@ -1,10 +1,10 @@
-package com.example.clapandwhistledetector;
+package com.example.clapandwhistledetector.util;
 
 import android.content.Context;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 
-class PreferenceUtil {
+public class PreferenceUtil {
 
     private final Context mContext;
 

@@ -1,4 +1,4 @@
-package com.example.clapandwhistledetector;
+package com.example.clapandwhistledetector.util;
 
 import android.os.Handler;
 import android.os.Looper;
