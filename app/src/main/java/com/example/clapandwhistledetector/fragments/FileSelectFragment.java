@@ -34,11 +34,12 @@ public class FileSelectFragment extends Fragment {
         binding = FragmentFileSelectBinding.inflate(inflater, container, false);
         requireActivity().setActionBar(binding.toolbar);
         requireActivity().getActionBar().setTitle("Select Tone");
-        // Display application icon in the toolbar
+
         requireActivity().getActionBar().setDisplayShowHomeEnabled(true);
         requireActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
         binding.toolbar.setNavigationOnClickListener(view -> requireActivity().onBackPressed());
         prefUtil = new PreferenceUtil(getActivity());
+
         binding.importLayout.setOnClickListener(view -> {
             if (savedInstanceState == null) {
                 getParentFragmentManager()
@@ -55,6 +56,7 @@ public class FileSelectFragment extends Fragment {
                 mediaPlayer = MediaPlayer.create(getActivity(), R.raw.alarm);
                 mediaPlayer.start();
                 prefUtil.saveString(FileSelectActivity.SELECTED_FILE_URI, "");
+                prefUtil.saveString(FileSelectActivity.SELECTED_FILE_NAME, "");
                 binding.selectedFileName.setText("None");
             }
         });
@@ -64,11 +66,9 @@ public class FileSelectFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("TAG", "onResume: ");
-        String stringUri = prefUtil.readString(FileSelectActivity.SELECTED_FILE_URI, "");
-        if(stringUri.length() != 0) {
-            uri = Uri.parse(stringUri);
-            binding.selectedFileName.setText(uri.getQueryParameter("title"));
+        String name = prefUtil.readString(FileSelectActivity.SELECTED_FILE_NAME, "");
+        if(name.length() != 0) {
+            binding.selectedFileName.setText(name);
             binding.radioButton.setChecked(false);
         }else {
             binding.selectedFileName.setText("None");

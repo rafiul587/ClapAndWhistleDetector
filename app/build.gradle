@@ -1,5 +1,7 @@
 plugins {
     id 'com.android.application'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
 }
 
 android {
@@ -45,4 +47,12 @@ dependencies {
     implementation "androidx.preference:preference:1.2.0"
     implementation "androidx.fragment:fragment:1.4.1"
     implementation 'androidx.core:core-splashscreen:1.0.0-beta01'
+
+    implementation platform('com.google.firebase:firebase-bom:29.1.0')
+
+    // Declare the dependencies for the Crashlytics and Analytics libraries
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-analytics'
+
 }

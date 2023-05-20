@@ -1,308 +1,316 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#132847">
+    android:fillViewport="true">
 
-    <ImageView
-        android:id="@+id/topImage"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/top_image"
-        app:layout_constraintDimensionRatio="1:.8"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/guidelineHalfWidth"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/bottomImage"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/bottom_image"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="1:.8"
-        app:layout_constraintEnd_toEndOf="@id/guidelineHalfWidth"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:text="Settings"
-        android:textColor="#eee"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <LinearLayout
-        android:id="@+id/melody"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="140dp"
-        android:background="@drawable/melody_background"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:paddingHorizontal="50dp"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toTopOf="parent">
+        android:background="#132847">
 
         <ImageView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@drawable/ic_melody_icon" />
+            android:id="@+id/topImage"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/top_image"
+            app:layout_constraintDimensionRatio="1:.8"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/guidelineHalfWidth"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/bottomImage"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/bottom_image"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:.8"
+            app:layout_constraintEnd_toEndOf="@id/guidelineHalfWidth"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
+            android:id="@+id/pageTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:text="Melody Tunes"
+            android:layout_marginTop="@dimen/medium_margin"
+            android:text="Settings"
+            android:textColor="#eee"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/melody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/medium_margin"
+            android:background="@drawable/melody_background"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/melody_padding"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@id/pageTitle">
+
+            <ImageView
+                android:layout_width="@dimen/melody_icon"
+                android:layout_height="@dimen/melody_icon"
+                android:src="@drawable/ic_melody_icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:text="Melody Tunes"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginVertical="2dp"
+            android:background="@drawable/option_background"
+            app:layout_constraintBottom_toBottomOf="@id/vibrationIcon"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toTopOf="@id/vibrationIcon" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".15" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".85" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineHalfWidth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".5" />
+
+        <ImageView
+            android:id="@+id/vibrationIcon"
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="@dimen/common_margin"
+            android:background="@drawable/background_vibration"
+            android:padding="10dp"
+            android:src="@drawable/ic_vibrate_icon"
+            app:layout_constraintEnd_toStartOf="@id/vibration"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@+id/melody" />
+
+        <TextView
+            android:id="@+id/vibration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vibration"
             android:textSize="20sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/vibrationIcon"
+            app:layout_constraintEnd_toStartOf="@id/vibrationSwitch"
+            app:layout_constraintStart_toEndOf="@id/vibrationIcon"
+            app:layout_constraintTop_toTopOf="@id/vibrationIcon" />
 
-    <View
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginVertical="2dp"
-        android:background="@drawable/option_background"
-        app:layout_constraintBottom_toBottomOf="@id/vibrationIcon"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toTopOf="@id/vibrationIcon" />
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/vibrationSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textOff="Off"
+            android:textOn="On"
+            app:layout_constraintBottom_toBottomOf="@id/vibration"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toEndOf="@id/vibration"
+            app:layout_constraintTop_toTopOf="@id/vibration" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineStart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent=".15" />
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginVertical="2dp"
+            android:background="@drawable/option_background"
+            app:layout_constraintBottom_toBottomOf="@id/flashIcon"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toTopOf="@id/flashIcon" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineEnd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent=".85" />
+        <ImageView
+            android:id="@+id/flashIcon"
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/background_flashlight"
+            android:padding="10dp"
+            android:src="@drawable/ic_flash_icon"
+            app:layout_constraintEnd_toStartOf="@id/flashLight"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@+id/vibrationIcon" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineHalfWidth"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent=".5" />
+        <TextView
+            android:id="@+id/flashLight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FlashLight"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/flashIcon"
+            app:layout_constraintEnd_toStartOf="@id/flashLightSwitch"
+            app:layout_constraintStart_toEndOf="@id/flashIcon"
+            app:layout_constraintTop_toTopOf="@id/flashIcon" />
 
-    <ImageView
-        android:id="@+id/vibrationIcon"
-        android:layout_width="60dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="30dp"
-        android:background="@drawable/background_vibration"
-        android:padding="10dp"
-        android:src="@drawable/ic_vibrate_icon"
-        app:layout_constraintEnd_toStartOf="@id/vibration"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@+id/melody" />
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/flashLightSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textOff="Off"
+            android:textOn="On"
+            app:layout_constraintBottom_toBottomOf="@id/flashLight"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toEndOf="@id/flashLight"
+            app:layout_constraintTop_toTopOf="@id/flashLight" />
 
-    <TextView
-        android:id="@+id/vibration"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Vibration"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/vibrationIcon"
-        app:layout_constraintEnd_toStartOf="@id/vibrationSwitch"
-        app:layout_constraintStart_toEndOf="@id/vibrationIcon"
-        app:layout_constraintTop_toTopOf="@id/vibrationIcon" />
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginVertical="2dp"
+            android:background="@drawable/option_background"
+            app:layout_constraintBottom_toBottomOf="@id/soundIcon"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toTopOf="@id/soundIcon" />
 
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/vibrationSwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textOff="Off"
-        android:textOn="On"
-        app:layout_constraintBottom_toBottomOf="@id/vibration"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toEndOf="@id/vibration"
-        app:layout_constraintTop_toTopOf="@id/vibration" />
+        <ImageView
+            android:id="@+id/soundIcon"
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/background_sound"
+            android:padding="10dp"
+            android:src="@drawable/ic_sound_icon"
+            app:layout_constraintEnd_toStartOf="@id/sound"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@+id/flashIcon" />
 
-    <View
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginVertical="2dp"
-        android:background="@drawable/option_background"
-        app:layout_constraintBottom_toBottomOf="@id/flashIcon"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toTopOf="@id/flashIcon" />
+        <TextView
+            android:id="@+id/sound"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sound"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/soundIcon"
+            app:layout_constraintEnd_toStartOf="@id/soundSwitch"
+            app:layout_constraintStart_toEndOf="@id/soundIcon"
+            app:layout_constraintTop_toTopOf="@id/soundIcon" />
 
-    <ImageView
-        android:id="@+id/flashIcon"
-        android:layout_width="60dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/background_flashlight"
-        android:padding="10dp"
-        android:src="@drawable/ic_flash_icon"
-        app:layout_constraintEnd_toStartOf="@id/flashLight"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@+id/vibrationIcon" />
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/soundSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textOff="Off"
+            android:textOn="On"
+            app:layout_constraintBottom_toBottomOf="@id/sound"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toEndOf="@id/sound"
+            app:layout_constraintTop_toTopOf="@id/sound" />
 
-    <TextView
-        android:id="@+id/flashLight"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="FlashLight"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/flashIcon"
-        app:layout_constraintEnd_toStartOf="@id/flashLightSwitch"
-        app:layout_constraintStart_toEndOf="@id/flashIcon"
-        app:layout_constraintTop_toTopOf="@id/flashIcon" />
+        <View
+            android:id="@+id/selectTonesLayout"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/option_background"
+            android:paddingVertical="10dp"
+            app:layout_constraintBottom_toBottomOf="@id/toneIcon"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toTopOf="@id/toneIcon" />
 
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/flashLightSwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textOff="Off"
-        android:textOn="On"
-        app:layout_constraintBottom_toBottomOf="@id/flashLight"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toEndOf="@id/flashLight"
-        app:layout_constraintTop_toTopOf="@id/flashLight" />
-
-    <View
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginVertical="2dp"
-        android:background="@drawable/option_background"
-        app:layout_constraintBottom_toBottomOf="@id/soundIcon"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toTopOf="@id/soundIcon" />
-
-    <ImageView
-        android:id="@+id/soundIcon"
-        android:layout_width="60dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/background_sound"
-        android:padding="10dp"
-        android:src="@drawable/ic_sound_icon"
-        app:layout_constraintEnd_toStartOf="@id/sound"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@+id/flashIcon" />
-
-    <TextView
-        android:id="@+id/sound"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sound"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/soundIcon"
-        app:layout_constraintEnd_toStartOf="@id/soundSwitch"
-        app:layout_constraintStart_toEndOf="@id/soundIcon"
-        app:layout_constraintTop_toTopOf="@id/soundIcon" />
-
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/soundSwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textOff="Off"
-        android:textOn="On"
-        app:layout_constraintBottom_toBottomOf="@id/sound"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toEndOf="@id/sound"
-        app:layout_constraintTop_toTopOf="@id/sound" />
-
-    <View
-        android:id="@+id/selectTonesLayout"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:paddingVertical="10dp"
-        android:background="@drawable/option_background"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toTopOf="@id/toneIcon"
-        app:layout_constraintBottom_toBottomOf="@id/toneIcon"/>
         <ImageView
             android:id="@+id/toneIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:tint="@color/black"
-            app:layout_constraintTop_toBottomOf="@id/soundIcon"
-            app:layout_constraintStart_toStartOf="@id/guidelineStart"
-            android:layout_marginTop="20dp"
             android:layout_marginStart="15dp"
+            android:layout_marginTop="@dimen/common_margin"
             android:paddingVertical="10dp"
-            android:src="@drawable/ic_tone_24"/>
+            android:src="@drawable/ic_tone_24"
+            android:tint="@color/black"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@id/soundIcon" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="@id/toneIcon"
-            app:layout_constraintBottom_toBottomOf="@id/toneIcon"
-            app:layout_constraintStart_toEndOf="@id/toneIcon"
-            app:layout_constraintEnd_toStartOf="@id/arrowForward"
+            android:text="Select Tone"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:text="Select Tone" />
+            app:layout_constraintBottom_toBottomOf="@id/toneIcon"
+            app:layout_constraintEnd_toStartOf="@id/arrowForward"
+            app:layout_constraintStart_toEndOf="@id/toneIcon"
+            app:layout_constraintTop_toTopOf="@id/toneIcon" />
 
         <ImageView
             android:id="@+id/arrowForward"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="15dp"
-            app:layout_constraintTop_toTopOf="@id/toneIcon"
+            android:src="@drawable/ic_arrow_forward"
+            android:tint="@color/black"
             app:layout_constraintBottom_toBottomOf="@id/toneIcon"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-            android:src="@drawable/ic_arrow_forward"
-            android:tint="@color/black"/>
+            app:layout_constraintTop_toTopOf="@id/toneIcon" />
 
-    <LinearLayout
-        android:id="@+id/volumeLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:background="@drawable/option_background"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@id/selectTonesLayout">
-
-        <ImageView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@drawable/ic_melody_icon"
-            android:tint="#1976D2" />
-
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/volumeLayout"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Volume"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="@dimen/common_margin"
+            android:background="@drawable/option_background"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@id/selectTonesLayout">
 
-        <androidx.appcompat.widget.AppCompatSeekBar
-            android:id="@+id/volumeSeekBar"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_marginLeft="17dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="17dp"
-            android:layout_marginBottom="10dp"
-            android:progressDrawable="@drawable/custom_seekbar"
-            android:splitTrack="false"
-            android:thumb="@android:color/transparent" />
-    </LinearLayout>
+            <ImageView
+                android:layout_width="@dimen/melody_icon"
+                android:layout_height="@dimen/melody_icon"
+                android:src="@drawable/ic_melody_icon"
+                android:tint="#1976D2" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Volume"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <androidx.appcompat.widget.AppCompatSeekBar
+                android:id="@+id/volumeSeekBar"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_marginLeft="18dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="18dp"
+                android:layout_marginBottom="10dp"
+                android:progressDrawable="@drawable/custom_seekbar"
+                android:splitTrack="false"
+                android:thumb="@android:color/transparent" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

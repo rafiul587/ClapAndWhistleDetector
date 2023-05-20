@@ -1,210 +1,217 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#132847">
+    android:fillViewport="true">
 
-    <ImageView
-        android:id="@+id/topImage"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintDimensionRatio="1:.8"
-        android:scaleType="fitXY"
-        android:src="@drawable/top_image"
-        app:layout_constraintStart_toStartOf="@id/guidelineHalfWidth"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-    <ImageView
-        android:id="@+id/bottomImage"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintDimensionRatio="1:.8"
-        android:scaleType="fitXY"
-        android:src="@drawable/bottom_image"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/guidelineHalfWidth"/>
-
-    <ImageView
-        android:id="@+id/powerSwitch"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_marginTop="80dp"
-        android:backgroundTint="@color/black"
-        android:src="@drawable/ic_group"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <LinearLayout
-        android:id="@+id/melody"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/melody_background"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:paddingHorizontal="50dp"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@id/powerSwitch">
+        android:background="#132847">
 
         <ImageView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@drawable/ic_melody_icon" />
+            android:id="@+id/topImage"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/top_image"
+            app:layout_constraintDimensionRatio="1:.8"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/guidelineHalfWidth"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/detectionStatus"
+
+        <ImageView
+            android:id="@+id/bottomImage"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/bottom_image"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:.8"
+            app:layout_constraintEnd_toEndOf="@id/guidelineHalfWidth"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageView
+            android:id="@+id/powerSwitch"
+            android:layout_width="@dimen/power_icon"
+            android:layout_height="@dimen/power_icon"
+            android:layout_marginTop="@dimen/powerSwitch_marginTop"
+            android:backgroundTint="@color/black"
+            android:src="@drawable/power_switch"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/melody"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:text="Melody Tunes"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/melody_background"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/melody_padding"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@id/powerSwitch">
+
+            <ImageView
+                android:layout_width="@dimen/melody_icon"
+                android:layout_height="@dimen/melody_icon"
+                android:src="@drawable/ic_melody_icon" />
+
+            <TextView
+                android:id="@+id/detectionStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:text="Melody Tunes"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginVertical="2dp"
+            android:background="@drawable/option_background"
+            app:layout_constraintBottom_toBottomOf="@id/whistleIcon"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toTopOf="@id/whistleIcon" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".15" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".85" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineHalfWidth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".5" />
+
+        <ImageView
+            android:id="@+id/whistleIcon"
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/background_vibration"
+            android:padding="10dp"
+            android:src="@drawable/ic_vibrate_icon"
+            app:layout_constraintEnd_toStartOf="@id/whistle"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@+id/melody" />
+
+        <TextView
+            android:id="@+id/whistle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Whistle"
             android:textSize="20sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/whistleIcon"
+            app:layout_constraintEnd_toStartOf="@id/whistleSwitch"
+            app:layout_constraintStart_toEndOf="@id/whistleIcon"
+            app:layout_constraintTop_toTopOf="@id/whistleIcon" />
 
-    <View
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginVertical="2dp"
-        android:background="@drawable/option_background"
-        app:layout_constraintBottom_toBottomOf="@id/whistleIcon"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toTopOf="@id/whistleIcon" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineStart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent=".15" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineEnd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent=".85" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineHalfWidth"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent=".5" />
-
-    <ImageView
-        android:id="@+id/whistleIcon"
-        android:layout_width="60dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="30dp"
-        android:background="@drawable/background_vibration"
-        android:padding="10dp"
-        android:src="@drawable/ic_vibrate_icon"
-        app:layout_constraintEnd_toStartOf="@id/whistle"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@+id/melody" />
-
-    <TextView
-        android:id="@+id/whistle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Whistle"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/whistleIcon"
-        app:layout_constraintEnd_toStartOf="@id/whistleSwitch"
-        app:layout_constraintStart_toEndOf="@id/whistleIcon"
-        app:layout_constraintTop_toTopOf="@id/whistleIcon" />
-
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/whistleSwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textOff="Off"
-        android:textOn="On"
-        app:layout_constraintBottom_toBottomOf="@id/whistle"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toEndOf="@id/whistle"
-        app:layout_constraintTop_toTopOf="@id/whistle" />
-
-    <View
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginVertical="2dp"
-        android:background="@drawable/option_background"
-        app:layout_constraintBottom_toBottomOf="@id/clapIcon"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toTopOf="@id/clapIcon" />
-
-    <ImageView
-        android:id="@+id/clapIcon"
-        android:layout_width="60dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/background_flashlight"
-        android:padding="10dp"
-        android:src="@drawable/ic_flash_icon"
-        app:layout_constraintEnd_toStartOf="@id/clap"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@+id/whistleIcon" />
-
-    <TextView
-        android:id="@+id/clap"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Clap"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/clapIcon"
-        app:layout_constraintEnd_toStartOf="@id/clapSwitch"
-        app:layout_constraintStart_toEndOf="@id/clapIcon"
-        app:layout_constraintTop_toTopOf="@id/clapIcon" />
-
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/clapSwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textOff="Off"
-        android:textOn="On"
-        app:layout_constraintBottom_toBottomOf="@id/clap"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toEndOf="@id/clap"
-        app:layout_constraintTop_toTopOf="@id/clap" />
-
-    <LinearLayout
-        android:id="@+id/goToSettings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/option_background"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginTop="30dp"
-        android:paddingHorizontal="20dp"
-        android:paddingVertical="10dp"
-        app:layout_constraintTop_toBottomOf="@id/clapIcon"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart">
-
-        <androidx.appcompat.widget.AppCompatImageView
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/whistleSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_settings_24"
-            app:tint="@color/black" />
+            android:textOff="Off"
+            android:textOn="On"
+            app:layout_constraintBottom_toBottomOf="@id/whistle"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toEndOf="@id/whistle"
+            app:layout_constraintTop_toTopOf="@id/whistle" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginVertical="2dp"
+            android:background="@drawable/option_background"
+            app:layout_constraintBottom_toBottomOf="@id/clapIcon"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toTopOf="@id/clapIcon" />
+
+        <ImageView
+            android:id="@+id/clapIcon"
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/background_flashlight"
+            android:padding="10dp"
+            android:src="@drawable/ic_flash_icon"
+            app:layout_constraintEnd_toStartOf="@id/clap"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@+id/whistleIcon" />
 
         <TextView
+            android:id="@+id/clap"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:textSize="16sp"
+            android:text="Clap"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:text="Configurations" />
-    </LinearLayout>
+            app:layout_constraintBottom_toBottomOf="@id/clapIcon"
+            app:layout_constraintEnd_toStartOf="@id/clapSwitch"
+            app:layout_constraintStart_toEndOf="@id/clapIcon"
+            app:layout_constraintTop_toTopOf="@id/clapIcon" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/clapSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textOff="Off"
+            android:textOn="On"
+            app:layout_constraintBottom_toBottomOf="@id/clap"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toEndOf="@id/clap"
+            app:layout_constraintTop_toTopOf="@id/clap" />
+
+        <LinearLayout
+            android:id="@+id/goToSettings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/option_background"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="10dp"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@id/clapIcon">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_settings_24"
+                app:tint="@color/black" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="Configurations"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

@@ -22,7 +22,6 @@ package com.example.clapandwhistledetector.util;
 
 import java.util.LinkedList;
 
-import com.musicg.api.ClapApi;
 import com.musicg.api.WhistleApi;
 import com.musicg.wave.WaveHeader;
 
@@ -32,6 +31,7 @@ import android.util.Log;
 
 public class DetectorThread extends Thread{
 
+	private final RecorderThread recorderThread;
 	private AudioRecord recorder;
 	private WaveHeader waveHeader;
 	private WhistleApi whistleApi;
@@ -45,11 +45,10 @@ public class DetectorThread extends Thread{
 	private int totalWhistlesDetected = 0;
 	private int whistleCheckLength = 3;
 	private int whistlePassScore = 3;
-	AudioDispatcherFactory factory;
 	
-	public DetectorThread(AudioDispatcherFactory factory){
-		this.factory = factory;
-		recorder = factory.getRecorder();
+	public DetectorThread(RecorderThread recorderThread){
+		this.recorderThread = recorderThread;
+		recorder = recorderThread.getAudioRecord();
 		int bitsPerSample = 0;
 		if (recorder.getAudioFormat() == AudioFormat.ENCODING_PCM_16BIT){
 			bitsPerSample = 16;
@@ -98,7 +97,7 @@ public class DetectorThread extends Thread{
 			Thread thisThread = Thread.currentThread();
 			while (_thread == thisThread) {
 				// detect sound
-				buffer = factory.getFrameBytes();
+				buffer = recorderThread.getFrameBytes();
 				
 				// audio analyst
 				if (buffer != null) {

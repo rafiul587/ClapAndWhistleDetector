@@ -10,6 +10,8 @@ import com.example.clapandwhistledetector.R;
 public class FileSelectActivity extends AppCompatActivity {
     public final static String SELECTED_FILE_URI = "selected_file_uri";
     public final static String SELECTED_FILE_POSITION = "selected_file_position";
+    public static final String SELECTED_FILE_NAME = "selected_file_name";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -20,15 +20,18 @@
 
 package com.example.clapandwhistledetector.activities;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.app.Activity;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
@@ -39,9 +42,9 @@ import androidx.core.content.ContextCompat;
 import androidx.core.splashscreen.SplashScreen;
 
 import com.example.clapandwhistledetector.MyService;
-import com.example.clapandwhistledetector.util.PreferenceUtil;
 import com.example.clapandwhistledetector.R;
 import com.example.clapandwhistledetector.databinding.ActivityMainBinding;
+import com.example.clapandwhistledetector.util.PreferenceUtil;
 
 public class MainActivity extends Activity implements OnClickListener {
 
@@ -51,6 +54,9 @@ public class MainActivity extends Activity implements OnClickListener {
     final Boolean OFF = false;
     final String WHISTLE = "whistle";
     final String CLAP = "clap";
+    final String FLASH = "flash";
+    final String VIBRATION = "vibration";
+    final String SOUND = "sound";
     PreferenceUtil prefUtil;
     private MyService service = null;
 
@@ -62,6 +68,20 @@ public class MainActivity extends Activity implements OnClickListener {
         setContentView(binding.getRoot());
         prefUtil = new PreferenceUtil(this);
         binding.powerSwitch.setOnClickListener(this);
+        binding.goToSettings.setOnClickListener(this);
+        initializeSettings();
+        addSwitchesListener();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, 321);
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         if (isMyServiceRunning()) {
             binding.powerSwitch.setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
             binding.detectionStatus.setText(R.string.detecting);
@@ -69,23 +89,30 @@ public class MainActivity extends Activity implements OnClickListener {
             binding.powerSwitch.setColorFilter(null);
             binding.detectionStatus.setText(R.string.melody_tunes);
         }
-        binding.goToSettings.setOnClickListener(this);
-        initializeSettings();
-        addSwitchesListener();
     }
 
     private void addSwitchesListener() {
         binding.whistleSwitch.setOnCheckedChangeListener((vs, i) -> {
             prefUtil.save(WHISTLE, i);
-            if(isMyServiceRunning()){
-                MyService.isRestartNeeded = true;
+            if (i) {
+                prefUtil.save(VIBRATION, ON);
+                prefUtil.save(FLASH, ON);
+                prefUtil.save(SOUND, ON);
+            }
+            if (isMyServiceRunning()) {
+                if (i || prefUtil.read(CLAP, OFF)) {
+                    MyService.isRestartNeeded = true;
+                }
                 stopService(new Intent(MainActivity.this, MyService.class));
+
             }
         });
         binding.clapSwitch.setOnCheckedChangeListener((fs, i) -> {
             prefUtil.save(CLAP, i);
-            if(isMyServiceRunning()){
-                MyService.isRestartNeeded = true;
+            if (isMyServiceRunning()) {
+                if (i || prefUtil.read(WHISTLE, OFF)) {
+                    MyService.isRestartNeeded = true;
+                }
                 stopService(new Intent(MainActivity.this, MyService.class));
             }
         });
@@ -118,43 +145,58 @@ public class MainActivity extends Activity implements OnClickListener {
         return false;
     }
 
-    private void checkAndStartService() {
+    private void startService(){
         Intent i = new Intent(MainActivity.this, MyService.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(i);
+        } else {
+            startService(i);
+        }
+        binding.powerSwitch.setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
+        binding.detectionStatus.setText(R.string.detecting);
+    }
+
+    private void stopService(){
+        Intent i = new Intent(MainActivity.this, MyService.class);
+        stopService(i);
+        binding.powerSwitch.setColorFilter(null);
+        binding.detectionStatus.setText(R.string.melody_tunes);
+    }
+
+    private void checkAndStartService() {
         if (service == null && !isMyServiceRunning()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                MainActivity.this.startForegroundService(i);
-                binding.powerSwitch.setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
-                binding.detectionStatus.setText(R.string.detecting);
+            if (prefUtil.read(WHISTLE, OFF) || prefUtil.read(CLAP, OFF)) {
+                startService();
+            }else {
+                Toast.makeText(this, R.string.enabele_whistle_or_clap, Toast.LENGTH_SHORT).show();
             }
         } else {
-            stopService(i);
-            binding.powerSwitch.setColorFilter(null);
-            binding.detectionStatus.setText(R.string.melody_tunes);
+            stopService();
         }
+
     }
 
     @Override
     public void onClick(View view) {
-        if (view == binding.powerSwitch) {
+        if (view.getId() == R.id.powerSwitch) {
             if (hasPermission()) {
                 checkAndStartService();
             } else {
                 ActivityCompat.requestPermissions(this, new String[]{"android.permission.RECORD_AUDIO"}, 123);
             }
-        } else if (view == binding.goToSettings) {
+        } else if (view.getId() == R.id.goToSettings) {
             if (isMyServiceRunning()) {
-                MyService.isRestartNeeded = true;
-                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-            }
+                Toast.makeText(this, R.string.setting_change_detection_running_message, Toast.LENGTH_SHORT).show();
+            } else startActivity(new Intent(MainActivity.this, SettingsActivity.class));
         }
     }
 
     @Override
     public void onBackPressed() {
         if (isMyServiceRunning()) {
-            showDialog("The App will keep detecting in the background.", "Ok");
+            showDialog(getString(R.string.exit_app_service_running_message), "Ok");
         } else {
-            showDialog("Do you want to exit the app?", "Yes");
+            showDialog(getString(R.string.exit_app_message), "Yes");
         }
     }
 
@@ -164,17 +206,9 @@ public class MainActivity extends Activity implements OnClickListener {
         //Setting message manually and performing action on button click
         builder
                 .setMessage(message)
-                .setCancelable(false)
-                .setPositiveButton(positive, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        finish();
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        //  Action for 'NO' Button
-                        dialog.cancel();
-                    }
+                .setPositiveButton(positive, (dialog, id) -> finish())
+                .setNegativeButton("No", (dialog, id) -> {
+                    dialog.cancel();
                 });
         builder.create().show();
     }

@@ -2,15 +2,16 @@ package com.example.clapandwhistledetector.activities;
 
 import android.content.Intent;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.clapandwhistledetector.MyService;
-import com.example.clapandwhistledetector.util.PreferenceUtil;
 import com.example.clapandwhistledetector.databinding.ActivitySettingsBinding;
+import com.example.clapandwhistledetector.util.PreferenceUtil;
 
 public class SettingsActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener {
 
@@ -43,7 +44,7 @@ public class SettingsActivity extends AppCompatActivity implements SeekBar.OnSee
         checkSettings();
         addSwitchesListener();
 
-        binding.selectTonesLayout.setOnClickListener( view -> {
+        binding.selectTonesLayout.setOnClickListener(view -> {
             startActivity(new Intent(SettingsActivity.this, FileSelectActivity.class));
         });
     }
@@ -53,7 +54,15 @@ public class SettingsActivity extends AppCompatActivity implements SeekBar.OnSee
             prefUtil.save(VIBRATION, i);
         });
         binding.flashLightSwitch.setOnCheckedChangeListener((fs, i) -> {
-            prefUtil.save(FLASH, i);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                prefUtil.save(FLASH, i);
+            }else {
+                if(binding.flashLightSwitch.isChecked()) {
+                    Toast.makeText(this, "FlashLight only available for Marshmallow+ device", Toast.LENGTH_SHORT).show();
+                    binding.flashLightSwitch.setChecked(false);
+                    binding.flashLightSwitch.setClickable(false);
+                }
+            }
         });
         binding.soundSwitch.setOnCheckedChangeListener((ss, i) -> {
             prefUtil.save(SOUND, i);
@@ -109,14 +118,5 @@ public class SettingsActivity extends AppCompatActivity implements SeekBar.OnSee
             return true;
         }
         return super.onKeyDown(keyCode, event);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if(MyService.isRestartNeeded){
-            stopService(new Intent(this, MyService.class));
-        }
-
     }
 }

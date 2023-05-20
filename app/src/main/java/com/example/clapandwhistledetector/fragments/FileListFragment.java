@@ -72,15 +72,12 @@ public class FileListFragment extends Fragment implements FileListAdapter.ClickL
                     RingtoneManager manager = new RingtoneManager(getActivity());
                     manager.setType(RingtoneManager.TYPE_ALL);
                     Cursor cursor = manager.getCursor();
-                    Log.d("TAG", "listRingtones: 2" + uri);
                     while (cursor.moveToNext()) {
                         String title = cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX);
                         Uri ringtoneURI = manager.getRingtoneUri(cursor.getPosition());
                         if (uri.length() != 0 && Uri.parse(uri).equals(ringtoneURI)) {
-                            Log.d("TAG", "listRingtones: 1" + uri);
                             temp.add(new FileModel(title, ringtoneURI, true));
                         } else temp.add(new FileModel(title, ringtoneURI, false));
-                        Log.d("TAG", "listRingtones: " + title);
                     }
                     ;
                     fileList.clear();
@@ -99,6 +96,7 @@ public class FileListFragment extends Fragment implements FileListAdapter.ClickL
         if (ringtone != null) ringtone.stop();
 
         Uri uri = fileList.get(adapterPosition).getUri();
+        String name = fileList.get(adapterPosition).getName();
         AudioAttributes attributes = new AudioAttributes.Builder()
                 .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
                 .setLegacyStreamType(AudioManager.STREAM_MUSIC)
@@ -114,10 +112,10 @@ public class FileListFragment extends Fragment implements FileListAdapter.ClickL
                 }
             }
         }
-        Log.d("TAG", "onClick: " + Objects.requireNonNull(uri).getQueryParameter("title"));
         String posString = prefUtil.readString(FileSelectActivity.SELECTED_FILE_POSITION, "");
 
         prefUtil.saveString(FileSelectActivity.SELECTED_FILE_URI, uri.toString());
+        prefUtil.saveString(FileSelectActivity.SELECTED_FILE_NAME, name);
         prefUtil.saveString(FileSelectActivity.SELECTED_FILE_POSITION, String.valueOf(adapterPosition));
         fileList.get(adapterPosition).setActive(true);
         fileListAdapter.notifyItemChanged(adapterPosition);

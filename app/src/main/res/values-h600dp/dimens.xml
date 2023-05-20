@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="powerSwitch_marginTop">80dp</dimen>
+    <dimen name="melody_marginTop">140dp</dimen>
+    <dimen name="melody_icon">80dp</dimen>
+    <dimen name="melody_padding">50dp</dimen>
+    <dimen name="power_icon">120dp</dimen>
+    <dimen name="medium_margin">40dp</dimen>
+    <dimen name="common_margin">30dp</dimen>
+</resources>

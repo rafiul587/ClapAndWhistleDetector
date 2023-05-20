@@ -43,7 +43,6 @@ import java.util.List;
 
     @Override
     public void onBindViewHolder(FileHolder fileHolder, int i) {
-        Log.d("TAG", "onBindViewHolder: ");
         fileHolder.fileName.setText(fileList.get(i).getName());
         fileHolder.radioButton.setChecked(fileList.get(i).isActive());
         if(!fileHolder.radioButton.isChecked()){

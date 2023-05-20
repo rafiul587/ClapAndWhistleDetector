@@ -17,13 +17,13 @@ import be.tarsos.dsp.io.android.AndroidAudioInputStream;
  * @author Joren Six
  * @see AudioDispatcher
  */
-public class AudioDispatcherFactory {
+public class AudioDispatcherFactory2 {
 
     AudioRecord audioInputStream;
     byte[] buffer;
     // for 1024 fft size (16bit sample size)
     int frameByteSize = 2048;
-    public AudioDispatcherFactory(){
+    public AudioDispatcherFactory2(){
         buffer = new byte[frameByteSize];
     }
 

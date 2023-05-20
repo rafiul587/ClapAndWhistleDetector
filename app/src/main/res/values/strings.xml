@@ -19,4 +19,8 @@
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <string name="title_activity_settings2">SettingsActivity2</string>
+    <string name="exit_app_message">Do you want to exit the app?</string>
+    <string name="exit_app_service_running_message">The App will keep detecting in the background.</string>
+    <string name="setting_change_detection_running_message">You can\'t change configurations when detection is running.</string>
+    <string name="enabele_whistle_or_clap">You have to enable either whistle or clap</string>
 </resources>

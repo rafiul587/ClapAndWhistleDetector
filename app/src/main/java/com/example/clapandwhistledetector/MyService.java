@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -17,40 +18,37 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
-import androidx.lifecycle.LifecycleService;
 
+import com.example.clapandwhistledetector.activities.DetectActivity;
 import com.example.clapandwhistledetector.activities.MainActivity;
-import com.example.clapandwhistledetector.activities.SplashActivity;
-import com.example.clapandwhistledetector.util.AudioDispatcherFactory;
 import com.example.clapandwhistledetector.util.DetectClapClap;
 import com.example.clapandwhistledetector.util.DetectorThread;
 import com.example.clapandwhistledetector.util.OnSignalsDetectedListener;
 import com.example.clapandwhistledetector.util.PreferenceUtil;
 import com.example.clapandwhistledetector.util.RecorderThread;
 
-public class MyService extends LifecycleService implements OnSignalsDetectedListener, MediaPlayer.OnCompletionListener {
+public class MyService extends Service implements OnSignalsDetectedListener, MediaPlayer.OnCompletionListener {
 
-    private static final String CHANNEL_DEFAULT_IMPORTANCE = "Low";
     private static final int ONGOING_NOTIFICATION_ID = 2;
+    private static final long[] VIBRATE_PATTERN = {300, 700};
     final static String SELECTED_FILE_URI = "selected_file_uri";
     public static Boolean isRestartNeeded = false;
     private DetectorThread detectorThread;
     private RecorderThread recorderThread;
     private DetectClapClap detectClapClap;
-    public static ThreadGroup threadGroups = new ThreadGroup("Thread Groups");
     String cameraId;
     MediaPlayer mediaPlayer;
     public static Vibrator vibrator;
     CameraManager cameraManager;
     CountDownTimer mTimer;
     CountDownTimer playTimer;
+    private boolean isPlayTimerRunning = false;
     Notification notification;
     PreferenceUtil prefUtil;
     final Boolean OFF = false;
@@ -59,14 +57,9 @@ public class MyService extends LifecycleService implements OnSignalsDetectedList
     final String SOUND = "sound";
     final String WHISTLE = "whistle";
     final String CLAP = "clap";
-    final String WHISTLE_AND_CLAP = "whistleAndClap";
 
-    public static volatile Boolean keepVibrate = false;
     public static volatile Boolean keepFlashOn = false;
-    public static Boolean keepPlayingSound = false;
-    private boolean deviceHasCameraFlash;
-    private boolean isFlashOn;
-    private boolean isFlashEnable, isVibrationEnable, isSoundEnable, isClapEnabled, isWhistleEnabled;
+    private boolean deviceHasCameraFlash, isFlashOn, isFlashEnable, isVibrationEnable, isSoundEnable;
 
     public MyService() {
     }
@@ -74,14 +67,12 @@ public class MyService extends LifecycleService implements OnSignalsDetectedList
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        super.onBind(intent);
         return null;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
-        Toast.makeText(this, "Detection Started", Toast.LENGTH_SHORT).show();
         prefUtil = new PreferenceUtil(this);
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         initializeCameraManager();
@@ -96,11 +87,15 @@ public class MyService extends LifecycleService implements OnSignalsDetectedList
 
     private void initializeMediaPlayer() {
         String uriString = prefUtil.readString(SELECTED_FILE_URI, "");
-        if (mediaPlayer != null) mediaPlayer.reset();
+        if (mediaPlayer != null) {
+            mediaPlayer.reset();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
         if (uriString.length() != 0) {
             Uri uri = Uri.parse(uriString);
             try {
-                if (mediaPlayer == null) mediaPlayer = new MediaPlayer();
+                mediaPlayer = new MediaPlayer();
                 mediaPlayer.setDataSource(this, uri);
                 mediaPlayer.prepareAsync();
             } catch (Exception e) {
@@ -124,14 +119,34 @@ public class MyService extends LifecycleService implements OnSignalsDetectedList
         new Handler(Looper.getMainLooper()).post(() -> playTimer = new CountDownTimer(60000, 1000) {
             public void onTick(long j) {
             }
+
             public void onFinish() {
-                if (vibrator != null) vibrator.cancel();
-                keepFlashOn = false;
-                keepVibrate = false;
-                keepPlayingSound = false;
-                threadGroups.interrupt();
+                Log.d("TAG", "onFinish: ");
+                isPlayTimerRunning = false;
+                try {
+                    if (vibrator != null) vibrator.cancel();
+                    startTimer(false);
+                    mediaPlayer.reset();
+                } catch (Exception ignored) {
+                }
             }
         }.start());
+
+        new Handler(Looper.getMainLooper()).post(() -> mTimer = new CountDownTimer(1000, 1000) {
+            public void onTick(long j) {
+            }
+
+            public void onFinish() {
+                if (isFlashOn) {
+                    turnOffFlash();
+                } else {
+                    turnOnFlash();
+                }
+                if (keepFlashOn) {
+                    mTimer.start();
+                }
+            }
+        });
     }
 
     private void checkSettings() {
@@ -141,35 +156,33 @@ public class MyService extends LifecycleService implements OnSignalsDetectedList
     }
 
     private void initializeDetector() {
-        isWhistleEnabled = prefUtil.read(WHISTLE, OFF);
-        isClapEnabled = prefUtil.read(CLAP, OFF);
-        AudioDispatcherFactory factory = new AudioDispatcherFactory();
+        boolean isWhistleEnabled = prefUtil.read(WHISTLE, OFF);
+        boolean isClapEnabled = prefUtil.read(CLAP, OFF);
+        try {
+            if (isWhistleEnabled && isClapEnabled) {
+                //For Whistle
+                recorderThread = new RecorderThread();
+                recorderThread.start();
+                detectorThread = new DetectorThread(recorderThread);
+                detectorThread.start();
+                detectorThread.setOnSignalsDetectedListener(this);
 
-        if (isWhistleEnabled && isClapEnabled) {
-/*            recorderThread = new RecorderThread();
-            recorderThread.start();*/
-            Log.d("TAG", "initializeDetector: Both");
-            //For Clap
-            detectClapClap = new DetectClapClap(factory);
-            detectClapClap.setOnSignalsDetectedListener(this);
+                //For Clap
+                detectClapClap = new DetectClapClap();
+                detectClapClap.setOnSignalsDetectedListener(this);
 
-            //For Whistle
-            detectorThread = new DetectorThread(factory);
-            detectorThread.start();
-            detectorThread.setOnSignalsDetectedListener(this);
-
-        } else if (isClapEnabled) {
-            Log.d("TAG", "initializeDetector: clap");
-            detectClapClap = new DetectClapClap(factory);
-            detectClapClap.setOnSignalsDetectedListener(this);
-        } else if (isWhistleEnabled) {
-            Log.d("TAG", "initializeDetector: whistle");
-            factory.fromDefaultMicrophone(44100, 2048, 0);
-            detectorThread = new DetectorThread(factory);
-            detectorThread.start();
-            detectorThread.setOnSignalsDetectedListener(this);
+            } else if (isClapEnabled) {
+                detectClapClap = new DetectClapClap();
+                detectClapClap.setOnSignalsDetectedListener(this);
+            } else if (isWhistleEnabled) {
+                recorderThread = new RecorderThread();
+                recorderThread.start();
+                detectorThread = new DetectorThread(recorderThread);
+                detectorThread.start();
+                detectorThread.setOnSignalsDetectedListener(this);
+            }
+        } catch (Exception ignored) {
         }
-
     }
 
     private boolean hasCameraFlash() {
@@ -178,9 +191,10 @@ public class MyService extends LifecycleService implements OnSignalsDetectedList
 
     private void buildNotification() {
         Intent notificationIntent = new Intent(this, MainActivity.class);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent =
-                PendingIntent.getActivity(this, 0, notificationIntent, 0);
-        String NOTIFICATION_CHANNEL_ID = "com.example.clapandwhistledetector";
+                PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        String NOTIFICATION_CHANNEL_ID = this.getPackageName();
         String channelName = "Detect Whistle and Clap Service";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_LOW);
@@ -194,7 +208,7 @@ public class MyService extends LifecycleService implements OnSignalsDetectedList
         notification = notificationBuilder.setOngoing(true)
                 .setSmallIcon(R.drawable.whistle)
                 .setContentTitle("Whistle and Clap is detecting..")
-                .setPriority(NotificationManager.IMPORTANCE_DEFAULT)
+                .setPriority(Notification.PRIORITY_DEFAULT)
                 .setCategory(Notification.CATEGORY_SERVICE)
                 .setContentIntent(pendingIntent)
                 .build();
@@ -202,14 +216,24 @@ public class MyService extends LifecycleService implements OnSignalsDetectedList
 
     @Override
     public void onDestroy() {
-        Toast.makeText(this, "Detection Stopped", Toast.LENGTH_SHORT).show();
+        releaseEverything();
+        super.onDestroy();
+        if (isRestartNeeded) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(new Intent(this, MyService.class));
+                isRestartNeeded = false;
+            }
+        }
+    }
+
+    private void releaseEverything() {
         if (vibrator != null) {
             vibrator.cancel();
             vibrator = null;
         }
-        keepVibrate = false;
-        keepFlashOn = false;
-        threadGroups.interrupt();
+        startTimer(false);
+        if (playTimer != null) playTimer = null;
+        if (mTimer != null) mTimer = null;
 
         if (recorderThread != null) {
             recorderThread.stopRecording();
@@ -227,96 +251,69 @@ public class MyService extends LifecycleService implements OnSignalsDetectedList
             mediaPlayer.reset();
             mediaPlayer.release();
         }
-        super.onDestroy();
-        if (isRestartNeeded) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(new Intent(this, MyService.class));
-                isRestartNeeded = false;
-            }
-        }
     }
 
-
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onWhistleDetected() {
-        Log.d("TAG", "onWhistleDetected: ");
         play();
-        Intent intent = new Intent(this, SplashActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     public void play() {
-        playTimer.start();
+        if (!isPlayTimerRunning) {
+            isPlayTimerRunning = true;
+            playTimer.start();
+            Intent i = new Intent(this, DetectActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(i);
+        }
         if (isVibrationEnable) {
             startVibration();
         }
         if (isFlashEnable && deviceHasCameraFlash) {
-            startTimer(1000, true);
+            startTimer(true);
         }
         if (isSoundEnable) {
-            keepPlayingSound = true;
             playSound();
         }
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onClapDetected() {
-        Intent intent = new Intent(this, SplashActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
         play();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    private void startTimer(int i, Boolean z) {
+    private void startTimer(Boolean z) {
         keepFlashOn = z;
         if (keepFlashOn) {
-            new Handler(Looper.getMainLooper()).post(() -> mTimer = new CountDownTimer(i, 1000) {
-                public void onTick(long j) {
-                    Log.d("TAG", "onTick: 1");
-                }
-
-                public void onFinish() {
-                    if (isFlashOn) {
-                        Log.d("TAG", "onFinish: 1");
-                        turnOffFlash();
-                    } else {
-                        Log.d("TAG", "onFinish: 2");
-                        turnOnFlash();
-                    }
-                    startTimer(1000, keepFlashOn);
-                }
-            }.start());
+            mTimer.start();
         } else {
             mTimer.cancel();
             turnOffFlash();
-            Log.d("TAG", "startTimer: jjjjhjh");
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     private void turnOnFlash() {
         if (!isFlashOn) {
             isFlashOn = true;
             try {
-                cameraManager.setTorchMode(cameraId, true);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    cameraManager.setTorchMode(cameraId, true);
+                }
             } catch (CameraAccessException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
+
     private void turnOffFlash() {
         if (isFlashOn) {
             isFlashOn = false;
             try {
-                cameraManager.setTorchMode(cameraId, false);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    cameraManager.setTorchMode(cameraId, false);
+                }
             } catch (CameraAccessException e) {
                 e.printStackTrace();
             }
@@ -324,22 +321,19 @@ public class MyService extends LifecycleService implements OnSignalsDetectedList
     }
 
     private void startVibration() {
-        keepVibrate = true;
-        new Thread(threadGroups, () -> {
-            while (keepVibrate && !Thread.currentThread().isInterrupted()) {
-                Log.d("TAG", "runvibrate: " + keepVibrate);
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+        if (vibrator != null) {
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    // API 26 and above
+                    vibrator.vibrate(VibrationEffect.createWaveform(VIBRATE_PATTERN, 0));
+                } else {
+                    // Below API 26
+                    vibrator.vibrate(VIBRATE_PATTERN, 0);
                 }
-                try {
-                    vibrator.vibrate(1000);
-                } catch (Exception unused) {
-                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        }).start();
-
+        }
     }
 
     private void playSound() {
@@ -354,9 +348,7 @@ public class MyService extends LifecycleService implements OnSignalsDetectedList
 
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
-        if (keepPlayingSound) {
-            playSound();
-        }
+        playSound();
     }
 }
 
